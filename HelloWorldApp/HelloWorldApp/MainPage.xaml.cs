@@ -51,7 +51,23 @@ namespace HelloWorldApp
 
         private void buttonHello_Click(object sender, RoutedEventArgs e)
         {
-            this.textBlockOutput.Text = this.textBoxInput.Text;
+            var format = default(string);
+            switch ((string)this.comboBoxGreetType.SelectedValue)
+            {
+                case "朝":
+                    format = "おはようございます。{0}さん。";
+                    break;
+                case "昼":
+                    format = "こんにちは。{0}さん。";
+                    break;
+                case "晩":
+                    format = "こんばんは。{0}さん。";
+                    break;
+                default:
+                    throw new InvalidOperationException();
+
+            }
+            this.textBlockOutput.Text =　string.Format(format, this.textBoxInput.Text);
         }
     }
 }
