@@ -11,6 +11,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+    </Page.Resources>
+
     <!--
         This grid acts as a root panel for the page that defines two rows:
         * Row 0 contains the back button and page title
@@ -31,14 +34,14 @@
             <Button x:Name="backButton" Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
             <TextBlock x:Name="pageTitle" Grid.Column="1" Text="{StaticResource AppName}" Style="{StaticResource PageHeaderTextStyle}"/>
         </Grid>
-        <TextBox x:Name="textBoxInput" HorizontalAlignment="Left" Margin="121,15,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="431"/>
-        <Button x:Name="buttonGreet" Content="Greet" HorizontalAlignment="Left" Margin="121,52,0,0" Grid.Row="1" VerticalAlignment="Top" Click="buttonHello_Click"/>
-        <TextBlock x:Name="textBlockOutput" HorizontalAlignment="Left" Margin="125,95,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Style="{StaticResource BodyTextStyle}"/>
-        <ComboBox x:Name="comboBoxGreetType" HorizontalAlignment="Left" Margin="557,15,0,0" Grid.Row="1" VerticalAlignment="Top" Width="133" SelectedValuePath="Content">
+        <TextBox x:Name="textBoxName" HorizontalAlignment="Left" Margin="123,10,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="407"/>
+        <ComboBox x:Name="comboBoxTime" HorizontalAlignment="Left" Margin="535,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" SelectedValuePath="Content">
             <ComboBoxItem Content="朝" IsSelected="True"/>
             <ComboBoxItem Content="昼"/>
             <ComboBoxItem Content="晩"/>
         </ComboBox>
+        <Button x:Name="buttonGreet" Content="Greet" HorizontalAlignment="Left" Margin="123,47,0,0" Grid.Row="1" VerticalAlignment="Top" Click="buttonGreet_Click"/>
+        <TextBlock x:Name="textBlockMessage" HorizontalAlignment="Left" Margin="123,90,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top"/>
 
         <VisualStateManager.VisualStateGroups>
 

@@ -49,10 +49,13 @@ namespace HelloWorldApp
         {
         }
 
-        private void buttonHello_Click(object sender, RoutedEventArgs e)
+        private void buttonGreet_Click(object sender, RoutedEventArgs e)
         {
-            var format = default(string);
-            switch ((string)this.comboBoxGreetType.SelectedValue)
+            // 出力メッセージのフォーマットを格納するための変数
+            string format = null;
+
+            // 選択項目に応じて出力メッセージのフォーマットを設定する
+            switch ((string)comboBoxTime.SelectedValue)
             {
                 case "朝":
                     format = "おはようございます。{0}さん。";
@@ -64,10 +67,12 @@ namespace HelloWorldApp
                     format = "こんばんは。{0}さん。";
                     break;
                 default:
-                    throw new InvalidOperationException();
-
+                    // 朝と昼と晩しかありえない
+                    throw new InvalidOperationException("不正な値");
             }
-            this.textBlockOutput.Text =　string.Format(format, this.textBoxInput.Text);
+
+            // 出力メッセージをテキストブロックに設定する
+            textBlockMessage.Text = string.Format(format, textBoxName.Text);
         }
     }
 }
