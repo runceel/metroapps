@@ -1,0 +1,22 @@
+﻿<Page
+    x:Class="AccelerometerSample.MainPage"
+    IsTabStop="false"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AccelerometerSample"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid x:Name="screenGrid" Background="#FF82D4D1">
+        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Ellipse x:Name="marimoEllipse" Fill="#FF00571C" Height="{Binding Size}" Stroke="#FF002102" Width="{Binding Size}" Canvas.Left="{Binding Left}" Canvas.Top="{Binding Top}" ManipulationMode="All" ManipulationDelta="marimoEllipse_ManipulationDelta" />
+        </Canvas>
+        
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <TextBlock x:Name="labelX" Text="x: 0.000" FontSize="48" Foreground="Black" VerticalAlignment="Bottom" Margin="20,0,0,20" />
+            <TextBlock x:Name="labelY" Text="y: 0.000" FontSize="48" Foreground="Black" VerticalAlignment="Bottom" Margin="20,0,0,20" />
+            <TextBlock x:Name="labelZ" Text="z: 0.000" FontSize="48" Foreground="Black" VerticalAlignment="Bottom" Margin="20,0,0,20" />
+        </StackPanel>
+    </Grid>
+</Page>
