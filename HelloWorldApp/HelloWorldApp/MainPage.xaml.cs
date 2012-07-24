@@ -38,6 +38,21 @@ namespace HelloWorldApp
         /// session.  This will be null the first time a page is visited.</param>
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
+            var model = HelloWorldModel.GetDefault();
+            if (pageState != null)
+            {
+                object name = null;
+                if (pageState.TryGetValue("MainPage#Name", out name))
+                {
+                    model.Name = (string)name;
+                }
+
+                object message = null;
+                if (pageState.TryGetValue("MainPage#Message", out message))
+                {
+                    model.Message = (string)message;
+                }
+            }
             // DefaultViewModelのHelloWorldModelをキーにしてHelloWorldModelのインスタンスを設定する
             this.DefaultViewModel["HelloWorldModel"] = HelloWorldModel.GetDefault();
         }
@@ -50,6 +65,9 @@ namespace HelloWorldApp
         /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
         protected override void SaveState(Dictionary<String, Object> pageState)
         {
+            var model = HelloWorldModel.GetDefault();
+            pageState["MainPage#Name"] = model.Name;
+            pageState["MainPage#Message"] = model.Message;
         }
 
         private void buttonGreet_Click(object sender, RoutedEventArgs e)

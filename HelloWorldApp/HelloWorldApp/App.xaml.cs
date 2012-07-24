@@ -15,6 +15,10 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using HelloWorldApp.DataModel;
+using Windows.Storage;
+using System.Diagnostics;
+using System.Xml;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 
@@ -49,6 +53,23 @@ namespace HelloWorldApp
             {
                 Window.Current.Activate();
                 return;
+            }
+
+            try
+            {
+                var applicationData = await ApplicationData.Current.LocalFolder.GetFileAsync("applicationData.xml");
+                using (var s = await applicationData.OpenStreamForReadAsync())
+                {
+                    HelloWorldModel.LoadFromStream(s);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                Debug.WriteLine("ファイル無し");
+            }
+            catch (XmlException)
+            {
+                Debug.WriteLine("ファイルフォーマットが不正");
             }
 
             // Create a Frame to act as the navigation context and associate it with
@@ -89,6 +110,23 @@ namespace HelloWorldApp
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
+
+            try
+            {
+                var applicationData = await ApplicationData.Current.LocalFolder.CreateFileAsync(
+                    "applicationData.xml", 
+                    CreationCollisionOption.ReplaceExisting);
+                using (var s = await applicationData.OpenStreamForWriteAsync())
+                {
+                    HelloWorldModel.SaveToStream(s);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                Debug.WriteLine("ファイル無し");
+            }
+
+            
             deferral.Complete();
         }
     }

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.Serialization;
 using HelloWorldApp.Common;
+using Windows.Storage;
 
 namespace HelloWorldApp.DataModel
 {
@@ -29,6 +32,7 @@ namespace HelloWorldApp.DataModel
         /// <summary>
         /// 名前を取得または設定します。
         /// </summary>
+        [IgnoreDataMember]
         public string Name
         {
             get { return this.name; }
@@ -39,6 +43,7 @@ namespace HelloWorldApp.DataModel
         /// <summary>
         /// メッセージを取得または設定します。
         /// </summary>
+        [IgnoreDataMember]
         public string Message
         {
             get { return this.message; }
@@ -84,6 +89,18 @@ namespace HelloWorldApp.DataModel
             // 出力メッセージをテキストブロックに設定する
             this.Message = string.Format(format, this.Name);
 
+        }
+
+        public static void SaveToStream(Stream s)
+        {
+            var serializer = new DataContractSerializer(typeof(HelloWorldModel));
+            serializer.WriteObject(s, GetDefault());
+        }
+
+        public static void LoadFromStream(Stream s)
+        {
+            var serializer = new DataContractSerializer(typeof(HelloWorldModel));
+            defaultInstance = serializer.ReadObject(s) as HelloWorldModel;
         }
     }
 }
