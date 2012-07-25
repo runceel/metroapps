@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using Windows.Devices.Sensors;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -9,12 +9,36 @@ using Windows.UI.Xaml.Navigation;
 
 namespace AccelerometerSample
 {
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : AccelerometerSample.Common.LayoutAwarePage
     {
         public MainPage()
         {
             this.InitializeComponent();
         }
+
+        /// <summary>
+        /// ナビゲーション中に渡されたコンテンツを含むページを移入します。
+        /// 前のセッションからページを再作成するときは、保存された状態でも提供されています。
+        /// </summary>
+        /// <param name="navigationParameter">The parameter value passed to
+        /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested.
+        /// </param>
+        /// <param name="pageState">A dictionary of state preserved by this page during an earlier
+        /// session.  This will be null the first time a page is visited.</param>
+        protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
+        {
+        }
+
+        /// <summary>
+        /// このページの場合、アプリケーションが中断されたり、ページナビゲーションのキャッシュから
+        /// 破棄され関連付けられた状態を維持します。値は、<see cref="SuspensionManager.SessionState"/>の
+        /// シリアル化要件に準拠する必要があります。
+        /// </summary>
+        /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
+        protected override void SaveState(Dictionary<String, Object> pageState)
+        {
+        }
+
 
         Marimo marimo = null;
         Accelerometer accelerometer = null;
@@ -79,11 +103,14 @@ namespace AccelerometerSample
 
         void timer_Tick(object sender, object e)
         {
+            var top = marimo.Top;
+            var left = marimo.Left;
+
             if (accValue == null || !marimo.IsAccelerometer)
             {
                 // 加速度の値が未取得の状態またはセンサーが存在しない場合
                 // マリモを下に移動させる
-                marimo.Top++;
+                top++;
             }
             else
             {
@@ -98,11 +125,11 @@ namespace AccelerometerSample
                     // マリモを上下に移動させる
                     if (accValue.AccelerationY < 0)
                     {
-                        marimo.Top++;
+                        top++;
                     }
                     else
                     {
-                        marimo.Top--;
+                        top--;
                     }
                 }
                 else
@@ -110,26 +137,38 @@ namespace AccelerometerSample
                     // マリモを左右に移動させる
                     if (accValue.AccelerationX < 0)
                     {
-                        marimo.Left--;
+                        left--;
                     }
                     else
                     {
-                        marimo.Left++;
+                        left++;
                     }
                 }
             }
 
             // マリモが画面外へ出ていかないように値を補正します
-            marimo.Top = Math.Min(marimo.Top, screenGrid.ActualHeight - marimo.Size);
-            marimo.Top = Math.Max(marimo.Top, 0);
-            marimo.Left = Math.Min(marimo.Left, screenGrid.ActualWidth - marimo.Size);
-            marimo.Left = Math.Max(marimo.Left, 0);
+            top = Math.Min(top, screenGrid.ActualHeight - marimo.Size);
+            top = Math.Max(top, 0);
+            left = Math.Min(left, screenGrid.ActualWidth - marimo.Size);
+            left = Math.Max(left, 0);
+
+            marimo.Top = top;
+            marimo.Left = left;
         }
 
         private void marimoEllipse_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            marimo.Top += e.Position.Y;
-            marimo.Left += e.Position.X;
+            var top = marimo.Top + e.Position.Y;
+            var left = marimo.Left + e.Position.X;
+
+            // マリモが画面外へ出ていかないように値を補正します
+            top = Math.Min(top, screenGrid.ActualHeight - marimo.Size);
+            top = Math.Max(top, 0);
+            left = Math.Min(left, screenGrid.ActualWidth - marimo.Size);
+            left = Math.Max(left, 0);
+
+            marimo.Top = top;
+            marimo.Left = left;
         }
     }
 }

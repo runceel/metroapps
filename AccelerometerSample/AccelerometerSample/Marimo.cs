@@ -1,21 +1,12 @@
-﻿using System.ComponentModel;
+﻿using AccelerometerSample.Common;
 
 namespace AccelerometerSample
 {
     /// <summary>
     /// マリモの情報を管理するクラス
     /// </summary>
-    public class Marimo : INotifyPropertyChanged
+    public class Marimo : BindableBase
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string info)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
-        }
-
         /// <summary>
         /// 加速度の有無
         /// </summary>
@@ -33,11 +24,7 @@ namespace AccelerometerSample
             }
             set
             {
-                if (value != SizeValue)
-                {
-                    SizeValue = value;
-                    NotifyPropertyChanged("Size");
-                }
+                SetProperty<int>(ref SizeValue, value, "Size");
             }
         }
 
@@ -53,11 +40,7 @@ namespace AccelerometerSample
             }
             set
             {
-                if (value != TopValue)
-                {
-                    TopValue = value;
-                    NotifyPropertyChanged("Top");
-                }
+                SetProperty<double>(ref TopValue, value, "Top");
             }
         }
 
@@ -73,11 +56,7 @@ namespace AccelerometerSample
             }
             set
             {
-                if (value != LeftValue)
-                {
-                    LeftValue = value;
-                    NotifyPropertyChanged("Left");
-                }
+                SetProperty<double>(ref LeftValue, value, "Left");
             }
         }
     }
