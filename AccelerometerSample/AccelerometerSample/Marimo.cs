@@ -2,6 +2,9 @@
 
 namespace AccelerometerSample
 {
+    /// <summary>
+    /// マリモの情報を管理するクラス
+    /// </summary>
     public class Marimo : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -19,7 +22,7 @@ namespace AccelerometerSample
         public bool IsAccelerometer { get; set; }
 
         /// <summary>
-        /// まりものサイズ
+        /// マリモのサイズ
         /// </summary>
         private int SizeValue = 50;
         public int Size
@@ -39,7 +42,7 @@ namespace AccelerometerSample
         }
 
         /// <summary>
-        /// まりもの位置(上からの距離)
+        /// マリモの位置(上からの距離)
         /// </summary>
         private double TopValue = 100;
         public double Top
@@ -59,7 +62,7 @@ namespace AccelerometerSample
         }
 
         /// <summary>
-        /// まりもの位置(左からの距離)
+        /// マリモの位置(左からの距離)
         /// </summary>
         private double LeftValue = 50;
         public double Left

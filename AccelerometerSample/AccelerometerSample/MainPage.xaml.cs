@@ -22,7 +22,7 @@ namespace AccelerometerSample
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            // まりも情報のインスタンスを生成して画面にデータバインディングする
+            // マリモ情報のインスタンスを生成して画面にデータバインディングする
             marimo = new Marimo();
             screenGrid.DataContext = marimo;
 
@@ -46,7 +46,7 @@ namespace AccelerometerSample
                 accelerometer.ReadingChanged += accelerometer_ReadingChanged;
             }
 
-            // まりもを動かすためのタイマー(約30fpsで動くことを想定)
+            // マリモを動かすためのタイマー(約30fpsで動くことを想定)
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(33);
             timer.Tick += timer_Tick;
@@ -82,7 +82,7 @@ namespace AccelerometerSample
             if (accValue == null || !marimo.IsAccelerometer)
             {
                 // 加速度の値が未取得の状態またはセンサーが存在しない場合
-                // まりもを下に移動させる
+                // マリモを下に移動させる
                 marimo.Top++;
             }
             else
@@ -92,10 +92,10 @@ namespace AccelerometerSample
                 labelY.Text = string.Format("y: {0:0.000}", accValue.AccelerationY);
                 labelZ.Text = string.Format("z: {0:0.000}", accValue.AccelerationZ);
 
-                // 傾きが大きい方向の向きにまりもを移動させる
+                // 傾きが大きい方向の向きにマリモを移動させる
                 if (Math.Abs(accValue.AccelerationX) < Math.Abs(accValue.AccelerationY))
                 {
-                    // まりもを上下に移動させる
+                    // マリモを上下に移動させる
                     if (accValue.AccelerationY < 0)
                     {
                         marimo.Top++;
@@ -107,7 +107,7 @@ namespace AccelerometerSample
                 }
                 else
                 {
-                    // まりもを左右に移動させる
+                    // マリモを左右に移動させる
                     if (accValue.AccelerationX < 0)
                     {
                         marimo.Left--;
@@ -119,7 +119,7 @@ namespace AccelerometerSample
                 }
             }
 
-            // まりもが画面外へ出ていかないように値を補正します
+            // マリモが画面外へ出ていかないように値を補正します
             marimo.Top = Math.Min(marimo.Top, screenGrid.ActualHeight - marimo.Size);
             marimo.Top = Math.Max(marimo.Top, 0);
             marimo.Left = Math.Min(marimo.Left, screenGrid.ActualWidth - marimo.Size);
