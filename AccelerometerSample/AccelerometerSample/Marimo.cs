@@ -8,56 +8,38 @@ namespace AccelerometerSample
     public class Marimo : BindableBase
     {
         /// <summary>
-        /// 加速度の有無
+        /// 加速度の有無を取得または設定します。
         /// </summary>
         public bool IsAccelerometer { get; set; }
 
+        private int size = 50;
         /// <summary>
-        /// マリモのサイズ
+        /// マリモのサイズを取得または設定します。
         /// </summary>
-        private int SizeValue = 50;
         public int Size
         {
-            get
-            {
-                return SizeValue;
-            }
-            set
-            {
-                SetProperty<int>(ref SizeValue, value, "Size");
-            }
+            get { return this.size; }
+            set { this.SetProperty<int>(ref this.size, value); }
         }
 
+        private double top = 100;
         /// <summary>
-        /// マリモの位置(上からの距離)
+        /// マリモの画面上からの位置を取得または設定します。
         /// </summary>
-        private double TopValue = 100;
         public double Top
         {
-            get
-            {
-                return TopValue;
-            }
-            set
-            {
-                SetProperty<double>(ref TopValue, value, "Top");
-            }
+            get { return this.top; }
+            set { this.SetProperty<double>(ref this.top, value); }
         }
 
+        private double left = 50;
         /// <summary>
-        /// マリモの位置(左からの距離)
+        /// マリモの画面左からの位置を取得または設定します。
         /// </summary>
-        private double LeftValue = 50;
         public double Left
         {
-            get
-            {
-                return LeftValue;
-            }
-            set
-            {
-                SetProperty<double>(ref LeftValue, value, "Left");
-            }
+            get { return this.left; }
+            set { this.SetProperty<double>(ref this.left, value); }
         }
     }
 }
