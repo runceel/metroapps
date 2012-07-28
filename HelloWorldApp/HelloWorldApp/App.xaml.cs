@@ -57,7 +57,10 @@ namespace HelloWorldApp
 
             try
             {
-                var applicationData = await ApplicationData.Current.LocalFolder.GetFileAsync("applicationData.xml");
+                // アプリケーションデータの保存しているファイルを取得
+                var applicationData = await ApplicationData.Current.LocalFolder.GetFileAsync(
+                    "applicationData.xml");
+                // 読み取り専用でファイルを開いてHelloWorldModelに読み込ませる
                 using (var s = await applicationData.OpenStreamForReadAsync())
                 {
                     HelloWorldModel.LoadFromStream(s);
@@ -65,10 +68,12 @@ namespace HelloWorldApp
             }
             catch (FileNotFoundException)
             {
+                // ファイルが無い(初回起動)なので何もしない
                 Debug.WriteLine("ファイル無し");
             }
             catch (XmlException)
             {
+                // ファイルが破損しているので何もしない
                 Debug.WriteLine("ファイルフォーマットが不正");
             }
 
@@ -111,22 +116,18 @@ namespace HelloWorldApp
             var deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
 
-            try
+            // アプリケーションデータの保存用ファイルを作成する。
+            // 既存ファイルは置き換える。
+            var applicationData = await ApplicationData.Current.LocalFolder.CreateFileAsync(
+                "applicationData.xml",
+                CreationCollisionOption.ReplaceExisting);
+
+            // 書き込み専用でファイルを開いてHelloWorldModelを保存する
+            using (var s = await applicationData.OpenStreamForWriteAsync())
             {
-                var applicationData = await ApplicationData.Current.LocalFolder.CreateFileAsync(
-                    "applicationData.xml", 
-                    CreationCollisionOption.ReplaceExisting);
-                using (var s = await applicationData.OpenStreamForWriteAsync())
-                {
-                    HelloWorldModel.SaveToStream(s);
-                }
-            }
-            catch (FileNotFoundException)
-            {
-                Debug.WriteLine("ファイル無し");
+                HelloWorldModel.SaveToStream(s);
             }
 
-            
             deferral.Complete();
         }
     }

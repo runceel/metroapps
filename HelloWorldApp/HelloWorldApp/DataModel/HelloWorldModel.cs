@@ -32,7 +32,6 @@ namespace HelloWorldApp.DataModel
         /// <summary>
         /// 名前を取得または設定します。
         /// </summary>
-        [IgnoreDataMember]
         public string Name
         {
             get { return this.name; }
@@ -55,6 +54,7 @@ namespace HelloWorldApp.DataModel
         /// <summary>
         /// 時間帯を取得または設定します。有効な値は朝・昼・晩のいずれかです。
         /// </summary>
+        [IgnoreDataMember]
         public string Time
         {
             get { return this.time; }
@@ -91,12 +91,20 @@ namespace HelloWorldApp.DataModel
 
         }
 
+        /// <summary>
+        /// デフォルトのインスタンスをStreamへ保存します。
+        /// </summary>
+        /// <param name="s">保存用のストリーム</param>
         public static void SaveToStream(Stream s)
         {
             var serializer = new DataContractSerializer(typeof(HelloWorldModel));
             serializer.WriteObject(s, GetDefault());
         }
 
+        /// <summary>
+        /// デフォルトのインスタンスをStreamから読み込みます。
+        /// </summary>
+        /// <param name="s">読み込み用のストリーム</param>
         public static void LoadFromStream(Stream s)
         {
             var serializer = new DataContractSerializer(typeof(HelloWorldModel));

@@ -39,22 +39,25 @@ namespace HelloWorldApp
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             var model = HelloWorldModel.GetDefault();
+            // 中断データがある場合は読み込む
             if (pageState != null)
             {
-                object name = null;
-                if (pageState.TryGetValue("MainPage#Name", out name))
+                // Timeのデータがあれば取得してHelloWorldModelに設定する
+                object time = null;
+                if (pageState.TryGetValue("Time", out time))
                 {
-                    model.Name = (string)name;
+                    model.Time = (string)time;
                 }
 
+                // Messageのデータがあれば取得してHelloWorldModelに設定する
                 object message = null;
-                if (pageState.TryGetValue("MainPage#Message", out message))
+                if (pageState.TryGetValue("Message", out message))
                 {
                     model.Message = (string)message;
                 }
             }
             // DefaultViewModelのHelloWorldModelをキーにしてHelloWorldModelのインスタンスを設定する
-            this.DefaultViewModel["HelloWorldModel"] = HelloWorldModel.GetDefault();
+            this.DefaultViewModel["HelloWorldModel"] = model;
         }
 
         /// <summary>
@@ -65,35 +68,14 @@ namespace HelloWorldApp
         /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
         protected override void SaveState(Dictionary<String, Object> pageState)
         {
+            // HelloWorldModelのTimeとMessageをpageStateに保存する
             var model = HelloWorldModel.GetDefault();
-            pageState["MainPage#Name"] = model.Name;
-            pageState["MainPage#Message"] = model.Message;
+            pageState["Time"] = model.Time;
+            pageState["Message"] = model.Message;
         }
 
         private void buttonGreet_Click(object sender, RoutedEventArgs e)
         {
-            //// 出力メッセージのフォーマットを格納するための変数
-            //string format = null;
-
-            //// 選択項目に応じて出力メッセージのフォーマットを設定する
-            //switch ((string)comboBoxTime.SelectedValue)
-            //{
-            //    case "朝":
-            //        format = "おはようございます。{0}さん。";
-            //        break;
-            //    case "昼":
-            //        format = "こんにちは。{0}さん。";
-            //        break;
-            //    case "晩":
-            //        format = "こんばんは。{0}さん。";
-            //        break;
-            //    default:
-            //        // 朝と昼と晩しかありえない
-            //        throw new InvalidOperationException("不正な値");
-            //}
-
-            //// 出力メッセージをテキストブロックに設定する
-            //textBlockMessage.Text = string.Format(format, textBoxName.Text);
             HelloWorldModel.GetDefault().Greet();
         }
     }
