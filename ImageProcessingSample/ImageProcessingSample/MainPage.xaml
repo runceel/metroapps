@@ -1,0 +1,39 @@
+﻿<Page
+    x:Class="ImageProcessingSample.MainPage"
+    IsTabStop="false"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ImageProcessingSample"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+	<Page.BottomAppBar>
+		<AppBar>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<StackPanel Orientation="Horizontal">
+					<Button x:Name="buttonPhoto" Height="84" Style="{StaticResource PhotoAppBarButtonStyle}" VerticalAlignment="Top"/>
+					<Button x:Name="buttonAdd" HorizontalAlignment="Left" Style="{StaticResource AddAppBarButtonStyle}" VerticalAlignment="Top"/>
+				</StackPanel>
+				<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal"/>
+			</Grid>
+		</AppBar>
+	</Page.BottomAppBar>
+
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+    	<Image x:Name="effectImage" Margin="40"/>
+    	<Grid Height="150" VerticalAlignment="Top" Background="{StaticResource AppBarBackgroundThemeBrush}">
+    		<StackPanel Orientation="Horizontal">
+    			<Button x:Name="buttonNormal" Content="Normal" Height="130" VerticalAlignment="Center" Width="130" HorizontalAlignment="Center" Margin="10"/>
+    			<Button x:Name="buttonMonochrome" Content="Monochrome" Height="130" VerticalAlignment="Center" Width="130" HorizontalAlignment="Center" Margin="10"/>
+    			<Button x:Name="buttonSepia" Content="Sepia" Height="130" VerticalAlignment="Center" Width="130" HorizontalAlignment="Center" Margin="10"/>
+    			<Button x:Name="buttonBakumatsu" Content="Backmatsu" Height="130" VerticalAlignment="Center" Width="130" HorizontalAlignment="Center" Margin="10"/>
+    			<Button x:Name="buttonToycamera" Content="Toycamera" Height="130" VerticalAlignment="Center" Width="130" HorizontalAlignment="Center" Margin="10"/>
+    		</StackPanel>
+    	</Grid>
+
+    </Grid>
+</Page>
