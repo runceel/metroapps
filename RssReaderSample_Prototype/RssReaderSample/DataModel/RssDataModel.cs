@@ -111,7 +111,7 @@ namespace RssReaderSample.DataModel
             {
                 Id = Guid.NewGuid().ToString(),
                 Title = feedUri,
-                Image = new Uri("ms-appdata:///Assets/DarkGray.png", UriKind.Absolute),
+                Image = new Uri("ms-appdata:///Assets/LightGray.png", UriKind.Absolute),
                 Link = new Uri("about:blank")
             };
         }
@@ -266,13 +266,15 @@ namespace RssReaderSample.DataModel
                 this.Subtitle = syndicationFeeds.Subtitle.Text;
                 this.Image = syndicationFeeds.ImageUri;
 
+                var r = new Random();
                 var items = await Task.Run(() => syndicationFeeds.Items.Select(item =>
                     new FeedItem
                     {
                         Id = item.Id,
                         Title = item.Title.Text,
                         Subtitle = item.PublishedDate.ToString(),
-                        Image = syndicationFeeds.ImageUri,
+                        Image = new Uri(
+                            r.Next() % 2 == 0 ? "ms-appx:///Assets/LightGray.png" : "ms-appx:///Assets/DarkGray.png", UriKind.Absolute),
                         Description = item.Summary.Text,
                         Link = item.Links.First().Uri,
                     }));
