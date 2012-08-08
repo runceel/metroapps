@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RssReaderSample.DataModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Popups;
@@ -38,8 +39,8 @@ namespace RssReaderSample
         /// session.  This will be null the first time a page is visited.</param>
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
-            var dlg = new MessageDialog((string)navigationParameter);
-            dlg.ShowAsync();
+            var id = (string)navigationParameter;
+            this.DefaultViewModel["FeedItem"] = RssReaderSampleModel.GetDefault().GetFeedItemById(id);
         }
 
         /// <summary>
