@@ -109,6 +109,9 @@
     <Compile Include="DataModel\Feed.cs" />
     <Compile Include="DataModel\FeedItem.cs" />
     <Compile Include="DataModel\RssReaderSampleModel.cs" />
+    <Compile Include="FeedItemDetailPage.xaml.cs">
+      <DependentUpon>FeedItemDetailPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -137,6 +140,10 @@
     <Content Include="Assets\LightGray.png" />
     <Content Include="Assets\MediumGray.png" />
     <Content Include="Assets\DarkGray.png" />
+    <Page Include="FeedItemDetailPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

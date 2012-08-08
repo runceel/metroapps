@@ -41,5 +41,16 @@ namespace RssReaderSample.DataModel
             await Task.WhenAll(this.Feeds.Select(f => f.Load()));
         }
 
+        /// <summary>
+        /// すべてのFeedからid指定でFeedItemを取得します。
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns>IDが一致したFeedItem。みつからない場合はnullを返します。</returns>
+        public FeedItem GetFeedItemById(string id)
+        {
+            return this.Feeds.SelectMany(f => f.FeedItems)
+                .FirstOrDefault(i => i.Id == id);
+        }
+
     }
 }

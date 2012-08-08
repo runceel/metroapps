@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RssReaderSample.DataModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Popups;
@@ -14,16 +13,16 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// グループ化されたアイテム ページのアイテム テンプレートについては、http://go.microsoft.com/fwlink/?LinkId=234231 を参照してください
+// The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
 namespace RssReaderSample
 {
     /// <summary>
-    /// グループ化されたアイテムのコレクションを表示するページです。
+    /// A basic page that provides characteristics common to most applications.
     /// </summary>
-    public sealed partial class MainPage : RssReaderSample.Common.LayoutAwarePage
+    public sealed partial class FeedItemDetailPage : RssReaderSample.Common.LayoutAwarePage
     {
-        public MainPage()
+        public FeedItemDetailPage()
         {
             this.InitializeComponent();
         }
@@ -39,15 +38,18 @@ namespace RssReaderSample
         /// session.  This will be null the first time a page is visited.</param>
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
-            var model = RssReaderSampleModel.GetDefault();
-            model.LoadAllFeeds();
-            this.DefaultViewModel["Groups"] = model.Feeds;
+            var dlg = new MessageDialog((string)navigationParameter);
+            dlg.ShowAsync();
         }
 
-        private void FeedItem_ItemClick(object sender, ItemClickEventArgs e)
+        /// <summary>
+        /// Preserves state associated with this page in case the application is suspended or the
+        /// page is discarded from the navigation cache.  Values must conform to the serialization
+        /// requirements of <see cref="SuspensionManager.SessionState"/>.
+        /// </summary>
+        /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
+        protected override void SaveState(Dictionary<String, Object> pageState)
         {
-            var item = e.ClickedItem as FeedItem;
-            this.Frame.Navigate(typeof(FeedItemDetailPage), item.Id);
         }
     }
 }
