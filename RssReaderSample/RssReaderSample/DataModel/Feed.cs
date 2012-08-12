@@ -12,7 +12,7 @@ namespace RssReaderSample.DataModel
 {
     public class Feed : BindableBase
     {
-        private string id;
+        private string id = Guid.NewGuid().ToString();
         /// <summary>
         /// 識別子を取得または設定します。
         /// </summary>
@@ -78,14 +78,12 @@ namespace RssReaderSample.DataModel
                 var client = new SyndicationClient();
                 var feed = await client.RetrieveFeedAsync(this.Uri);
 #endif
-            this.Id = feed.Id;
                 this.Title = feed.Title.Text;
                 this.LastUpdatedTime = feed.LastUpdatedTime;
 
                 var items = feed.Items.Select(i =>
                     new FeedItem
                     {
-                        Id = i.Id,
                         Title = i.Title.Text,
                         PublishedDate = i.PublishedDate,
                         Summary = i.Summary.Text,
@@ -101,7 +99,6 @@ namespace RssReaderSample.DataModel
             {
                 // エラーが発生した場合はダミーのデータを設定する
                 Debug.WriteLine(ex);
-                this.Id = Guid.NewGuid().ToString();
                 this.Title = "読み込みに失敗しました";
             }
         }

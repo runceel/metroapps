@@ -9,7 +9,7 @@ namespace RssReaderSample.DataModel
 {
     public class FeedItem : BindableBase
     {
-        private string id;
+        private string id = Guid.NewGuid().ToString();
         /// <summary>
         /// 識別子を取得または設定します。
         /// </summary>

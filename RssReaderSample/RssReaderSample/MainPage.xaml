@@ -92,7 +92,7 @@
                                 <Button
                                     AutomationProperties.Name="Group Title"
                                     Content="{Binding Title}"
-                                    Style="{StaticResource TextButtonStyle}"/>
+                                    Style="{StaticResource TextButtonStyle}" Click="FeedHeader_Click"/>
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -125,7 +125,7 @@
                                 <Button
                                     AutomationProperties.Name="Group Title"
                                     Content="{Binding Title}"
-                                    Style="{StaticResource TextButtonStyle}"/>
+                                    Style="{StaticResource TextButtonStyle}" Click="FeedHeader_Click"/>
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>

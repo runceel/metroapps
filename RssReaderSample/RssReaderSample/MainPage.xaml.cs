@@ -37,10 +37,10 @@ namespace RssReaderSample
         /// </param>
         /// <param name="pageState">A dictionary of state preserved by this page during an earlier
         /// session.  This will be null the first time a page is visited.</param>
-        protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
+        protected override async void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             var model = RssReaderSampleModel.GetDefault();
-            model.LoadAllFeeds();
+            await model.LoadAllFeeds();
             this.DefaultViewModel["Groups"] = model.Feeds;
         }
 
@@ -48,6 +48,13 @@ namespace RssReaderSample
         {
             var item = e.ClickedItem as FeedItem;
             this.Frame.Navigate(typeof(FeedItemDetailPage), item.Id);
+        }
+
+        private void FeedHeader_Click(object sender, RoutedEventArgs e)
+        {
+            // senderのDataContextに、Feedが入ってる
+            var feed = ((FrameworkElement)sender).DataContext as Feed;
+            this.Frame.Navigate(typeof(FeedDetailPage), feed.Id);
         }
     }
 }

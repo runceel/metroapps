@@ -35,14 +35,14 @@ namespace RssReaderSample.DataModel
         /// <summary>
         /// フィードの読み込みを行います。
         /// </summary>
-        public async void LoadAllFeeds()
+        public async Task LoadAllFeeds()
         {
             // すべてのフィードの読み込みを行う
             await Task.WhenAll(this.Feeds.Select(f => f.Load()));
         }
 
         /// <summary>
-        /// すべてのFeedからid指定でFeedItemを取得します。
+        /// すべてのFeedItemからId指定でFeedItemを取得します。
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns>IDが一致したFeedItem。みつからない場合はnullを返します。</returns>
@@ -50,6 +50,16 @@ namespace RssReaderSample.DataModel
         {
             return this.Feeds.SelectMany(f => f.FeedItems)
                 .FirstOrDefault(i => i.Id == id);
+        }
+
+        /// <summary>
+        /// すべてのFeedからId指定でFeedを取得します。
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns>IDが一致したFeed。みつからない場合はnullを返します。</returns>
+        public Feed GetFeedById(string id)
+        {
+            return this.Feeds.FirstOrDefault(i => i.Id == id);
         }
 
     }

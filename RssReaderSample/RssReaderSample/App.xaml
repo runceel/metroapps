@@ -17,8 +17,8 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!--アプリケーション固有のリソース -->
-
             <x:String x:Key="AppName">RssReaderSample</x:String>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
