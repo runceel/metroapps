@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using RssReaderSample.Common;
+using Windows.Storage;
 
 namespace RssReaderSample.DataModel
 {
     public class RssReaderSampleModel : BindableBase
     {
+        private static readonly string SaveFileName = "feeds.xml";
+
         private static RssReaderSampleModel defaultInstance = new RssReaderSampleModel();
         /// <summary>
         /// デフォルトのインスタンスの取得を行います。
@@ -60,6 +67,62 @@ namespace RssReaderSample.DataModel
         public Feed GetFeedById(string id)
         {
             return this.Feeds.FirstOrDefault(i => i.Id == id);
+        }
+
+        public async Task Load()
+        {
+            try
+            {
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(SaveFileName);
+                using (var s = await file.OpenStreamForReadAsync())
+                using (var ms = new MemoryStream())
+                {
+                    this.Load(s);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        public void Load(Stream stream)
+        {
+            try
+            {
+                var serializer = new DataContractSerializer(typeof(ObservableCollection<Feed>));
+                var data = serializer.ReadObject(stream) as ObservableCollection<Feed>;
+                if (data == null)
+                {
+                    return;
+                }
+
+                this.Feeds.Clear();
+                foreach (var feed in data)
+                {
+                    this.Feeds.Add(feed);
+                }
+            }
+            catch (XmlException ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        public async Task Save()
+        {
+            var file = await ApplicationData.Current.LocalFolder
+                .CreateFileAsync(SaveFileName, CreationCollisionOption.ReplaceExisting);
+            using (var s = await file.OpenStreamForWriteAsync())
+            {
+                this.Save(s);
+            }
+        }
+
+        public void Save(Stream stream)
+        {
+            var serializer = new DataContractSerializer(typeof(ObservableCollection<Feed>));
+            serializer.WriteObject(stream, this.Feeds);
         }
 
     }

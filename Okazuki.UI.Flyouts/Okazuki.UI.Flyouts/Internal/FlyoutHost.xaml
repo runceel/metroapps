@@ -1,0 +1,38 @@
+﻿<UserControl
+    x:Class="Okazuki.UI.Flyouts.Internal.FlyoutHost"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Okazuki.UI.Flyouts.Internal"
+    xmlns:flyouts="using:Okazuki.UI.Flyouts"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="100"
+    d:DesignWidth="300"
+    MinWidth="300"
+    MinHeight="100"
+    d:DataContext="{d:DesignInstance Type=flyouts:ConfirmFlyout, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <local:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+    </UserControl.Resources>
+
+    <Grid Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ContentControl x:Name="contentControlPane" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Commands}" Margin="5, 5, 5, 0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding Label}" Click="CommandButton_Click" Margin="2.5" MinWidth="75" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </Grid>
+</UserControl>

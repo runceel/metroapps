@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using RssReaderSample.DataModel;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 
@@ -50,6 +51,9 @@ namespace RssReaderSample
                 Window.Current.Activate();
                 return;
             }
+
+            // 保存したフィードを読み込む
+            //await RssReaderSampleModel.GetDefault().Load();
 
             // Create a Frame to act as the navigation context and associate it with
             // a SuspensionManager key

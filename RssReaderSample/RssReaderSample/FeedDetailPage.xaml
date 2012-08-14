@@ -19,30 +19,61 @@
             x:Name="itemsViewSource"
             Source="{Binding Items}"/>
         <DataTemplate x:Key="FeedSummaryTemplate">
-        	<Grid d:DataContext="{d:DesignInstance Type=datamodel:Feed, IsDesignTimeCreatable=True}">
-        		<StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
-        			<TextBlock HorizontalAlignment="Left" Style="{StaticResource SubheaderTextStyle}" TextWrapping="NoWrap" Text="最終更新日時" Margin="0,5,0,0"/>
-        			<TextBlock HorizontalAlignment="Left" Style="{StaticResource ItemTextStyle}" TextWrapping="NoWrap" Text="{Binding LastUpdatedTime}" Margin="20,5,0,0"/>
-        			<TextBlock HorizontalAlignment="Left" Style="{StaticResource SubheaderTextStyle}" TextWrapping="NoWrap" Text="URL" Margin="0,5,0,0"/>
-        			<TextBlock HorizontalAlignment="Left" Style="{StaticResource ItemTextStyle}" TextWrapping="NoWrap" Text="{Binding Uri}" Margin="20,5,0,0"/>
-        		</StackPanel>
-        	</Grid>
+            <Grid d:DataContext="{d:DesignInstance Type=datamodel:Feed, IsDesignTimeCreatable=True}">
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SubheaderTextStyle}" TextWrapping="NoWrap" Text="最終更新日時" Margin="0,5,0,0"/>
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource ItemTextStyle}" TextWrapping="NoWrap" Text="{Binding LastUpdatedTime}" Margin="20,5,0,0"/>
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SubheaderTextStyle}" TextWrapping="NoWrap" Text="URL" Margin="0,5,0,0"/>
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource ItemTextStyle}" TextWrapping="NoWrap" Text="{Binding Uri}" Margin="20,5,0,0"/>
+                </StackPanel>
+            </Grid>
         </DataTemplate>
         <DataTemplate x:Key="FeedItemDetailTemplate">
-        	<Grid d:DataContext="{d:DesignInstance Type=datamodel:FeedItem, IsDesignTimeCreatable=True}"  Height="110" Width="480" Margin="10">
-        		<Grid.ColumnDefinitions>
-        			<ColumnDefinition Width="Auto"/>
-        			<ColumnDefinition Width="*"/>
-        		</Grid.ColumnDefinitions>
-        		<Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="110" Height="110"/>
-        		<StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,0,0,0">
-        			<TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextStyle}" TextWrapping="NoWrap"/>
-        			<TextBlock Text="{Binding PublishedDate}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap"/>
-        			<TextBlock Text="{Binding Summary}" Style="{StaticResource BodyTextStyle}" MaxHeight="60"/>
-        		</StackPanel>
-        	</Grid>
+            <Grid d:DataContext="{d:DesignInstance Type=datamodel:FeedItem, IsDesignTimeCreatable=True}"  Height="110" Width="480" Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="110" Height="110"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,0,0,0">
+                    <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextStyle}" TextWrapping="NoWrap"/>
+                    <TextBlock Text="{Binding PublishedDate}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap"/>
+                    <TextBlock Text="{Binding Summary}" Style="{StaticResource BodyTextStyle}" MaxHeight="60"/>
+                </StackPanel>
+            </Grid>
         </DataTemplate>
+        <DataTemplate x:Key="SnappedFeedItemTemplate">
+            <Grid d:DataContext="{d:DesignInstance Type=datamodel:FeedItem, IsDesignTimeCreatable=True}" Margin="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="60" Height="60">
+                </Border>
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="{Binding Title}" Style="{StaticResource ItemTextStyle}" MaxHeight="40"/>
+                    <TextBlock Text="{Binding Summary}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="ItemListViewItemsPanelTemplate">
+        	<VirtualizingStackPanel Orientation="Vertical" Margin="0,20,0,0" />
+        </ItemsPanelTemplate>
     </Page.Resources>
+    <common:LayoutAwarePage.BottomAppBar>
+        <AppBar>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal"/>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Height="84" Style="{StaticResource DeleteAppBarButtonStyle}" VerticalAlignment="Top" Click="buttonDelete_Click"/>
+                </StackPanel>
+            </Grid>
+        </AppBar>
+    </common:LayoutAwarePage.BottomAppBar>
 
     <!--
         このグリッドは 2 つの行を定義するページのルート パネルとして機能します:
@@ -92,17 +123,7 @@
             Grid.Row="1"
             Visibility="Collapsed"
             Padding="10,0,0,60"
-            ItemsSource="{Binding Source={StaticResource itemsViewSource}}"
-            ItemTemplate="{StaticResource Standard80ItemTemplate}">
-
-            <ListView.Header>
-                <StackPanel>
-                    <TextBlock Text="{Binding Subtitle}" Margin="20,0,18,20" Style="{StaticResource TitleTextStyle}" MaxHeight="60"/>
-                    <Image Source="{Binding Image}" Margin="20,0,18,0" MaxHeight="160" Stretch="UniformToFill"/>
-                    <TextBlock Margin="20,20,18,30" Text="{Binding Description}" Style="{StaticResource BodyTextStyle}"/>
-                </StackPanel>
-            </ListView.Header>
-        </ListView>
+            ItemsSource="{Binding Source={StaticResource itemsViewSource}}" ItemTemplate="{StaticResource SnappedFeedItemTemplate}" HeaderTemplate="{StaticResource FeedSummaryTemplate}" ItemsPanel="{StaticResource ItemListViewItemsPanelTemplate}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="FeedItem_Click"/>
 
         <VisualStateManager.VisualStateGroups>
 

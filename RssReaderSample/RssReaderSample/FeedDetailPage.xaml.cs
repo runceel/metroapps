@@ -5,6 +5,7 @@ using System.Linq;
 using RssReaderSample.DataModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -49,6 +50,10 @@ namespace RssReaderSample
         {
             var feedItem = e.ClickedItem as FeedItem;
             this.Frame.Navigate(typeof(FeedItemDetailPage), feedItem.Id);
+        }
+
+        private void buttonDelete_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 }
