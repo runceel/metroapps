@@ -56,5 +56,31 @@ namespace RssReaderSample
             var feed = ((FrameworkElement)sender).DataContext as Feed;
             this.Frame.Navigate(typeof(FeedDetailPage), feed.Id);
         }
+
+        private void AddFeedButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Flyoutの中身のUserControl
+            var addFeedFlyout = new AddFeedFlyout();
+            // 横幅が画面幅 - 20より大きい場合は横幅を小さくする
+            addFeedFlyout.Width = Math.Min(this.ActualWidth - 20, addFeedFlyout.Width);
+
+            // Popupを作成
+            var flyoutPopup = new Popup
+            {
+                // 中身はAddFeedFlyout
+                Child = addFeedFlyout,
+                // Popup外をクリックしたときに閉じる
+                IsLightDismissEnabled = true,
+            };
+
+            // popupを表示するときの座標を計算
+            var point = FlyoutUtil.CalcFlyoutPosition((FrameworkElement)sender, addFeedFlyout);
+
+            // popupの位置を設定して表示
+            Canvas.SetTop(flyoutPopup, point.Y);
+            Canvas.SetLeft(flyoutPopup, point.X);
+            flyoutPopup.IsOpen = true;
+        }
+
     }
 }

@@ -1,0 +1,20 @@
+﻿<UserControl
+    x:Class="RssReaderSample.AddFeedFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RssReaderSample"
+    xmlns:datamodel="using:RssReaderSample.DataModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" 
+    Height="170" 
+    Width="400">
+    
+    <Grid Background="Purple" d:DataContext="{d:DesignInstance Type=datamodel:Feed, IsDesignTimeCreatable=True}">
+        <TextBlock HorizontalAlignment="Left" Margin="20,50,0,0" TextWrapping="Wrap" Text="URL" VerticalAlignment="Top" Style="{StaticResource BaselineTextStyle}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="19,20,0,0" TextWrapping="Wrap" Text="フィードの追加" VerticalAlignment="Top" Style="{StaticResource TitleTextStyle}"/>
+        <TextBox Margin="25,80,20,0" TextWrapping="Wrap" Text="{Binding Uri, Mode=TwoWay}" VerticalAlignment="Top"/>
+        <Button Content="追加" HorizontalAlignment="Right" Margin="0,117,20,0" VerticalAlignment="Top" Width="64"/>
+
+    </Grid>
+</UserControl>

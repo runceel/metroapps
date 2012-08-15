@@ -103,6 +103,9 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddFeedFlyout.xaml.cs">
+      <DependentUpon>AddFeedFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -115,6 +118,7 @@
     <Compile Include="FeedItemDetailPage.xaml.cs">
       <DependentUpon>FeedItemDetailPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FlyoutUtil.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -134,6 +138,10 @@
     <None Include="RssReaderSample_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="AddFeedFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Content Include="Assets\ch3cooh393_rss.xml" />
     <Content Include="Assets\Logo.png" />
     <Content Include="Assets\okazuki_rss.xml" />
