@@ -9,6 +9,26 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
     <Grid>
-        <TextBlock x:Name="textBlockMessage" TextWrapping="Wrap" Style="{StaticResource BodyTextStyle}" Margin="5"/>
+        <TextBlock x:Name="textBlockMessage" TextWrapping="Wrap" Margin="20, 20, 20, 0">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{StaticResource ApplicationForegroundThemeBrush}"/>
+                    <Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
+                    <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/>
+                    <Setter Property="FontWeight" Value="SemiLight"/>
+                    <Setter Property="TextTrimming" Value="WordEllipsis"/>
+                    <Setter Property="TextWrapping" Value="Wrap"/>
+                    <Setter Property="Typography.StylisticSet20" Value="True"/>
+                    <Setter Property="Typography.DiscretionaryLigatures" Value="True"/>
+                    <Setter Property="LineHeight" Value="20"/>
+                    <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <TranslateTransform X="-1" Y="4"/>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
     </Grid>
 </UserControl>
