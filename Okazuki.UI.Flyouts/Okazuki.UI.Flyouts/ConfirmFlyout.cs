@@ -19,6 +19,8 @@
     {
         private Popup currentPopup;
 
+        private FrameworkElement content;
+
         private ObservableCollection<IUICommand> commands = new ObservableCollection<IUICommand>();
 
         /// <summary>
@@ -41,31 +43,41 @@
             set { this.SetProperty(ref this.background, value); }
         }
 
-        /// <summary>
-        /// targetで指定したボタンにmessageで指定したメッセージを表示します。
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="message"></param>
-        /// <returns>押されたボタンに対応するコマンド。何も押されなかった場合はnullが返ります。</returns>
-        public async Task<IUICommand> ShowAsync(FrameworkElement target, string message)
+        public ConfirmFlyout(string message) : this(new MessageWindow { Message = message })
         {
-            var content = new MessageWindow { Message = message };
-            return await ShowAsync(target, content);
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                throw new ArgumentNullException("message");
+            }
+        }
+
+        public ConfirmFlyout(FrameworkElement content)
+        {
+            if (content == null)
+            {
+                throw new ArgumentNullException("content");
+            }
+
+            this.content = content;
         }
 
         /// <summary>
-        /// targetで指定したボタンにcontentで指定したUserControlを表示します。
+        /// targetで指定したボタンの上部にFlyoutを表示します。
         /// </summary>
         /// <param name="target"></param>
-        /// <param name="content"></param>
         /// <returns>押されたボタンに対応するコマンド。何も押されなかった場合はnullが返ります。</returns>
-        public async Task<IUICommand> ShowAsync(FrameworkElement target, FrameworkElement content)
+        public async Task<IUICommand> ShowAsync(FrameworkElement target)
         {
-            return await this.ShowAsyncInternal(target, content);
+            return await this.ShowAsyncInternal(target);
         }
 
-        private async Task<IUICommand> ShowAsyncInternal(FrameworkElement target, FrameworkElement content)
+        private async Task<IUICommand> ShowAsyncInternal(FrameworkElement target)
         {
+            if (target == null)
+            {
+                throw new ArgumentNullException("target");
+            }
+
             if (this.currentPopup != null)
             {
                 throw new InvalidOperationException("already called");

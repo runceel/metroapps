@@ -40,12 +40,12 @@ namespace FlyoutTestApp
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            var c = new ConfirmFlyout();
+            var c = new ConfirmFlyout("削除してもええかえ？");
             c.Commands.Add(new UICommand("OK", _ =>
             {
                 Debug.WriteLine("押された");
             }));
-            var command = await c.ShowAsync(sender as FrameworkElement, "削除してもええかえ？");
+            var command = await c.ShowAsync(sender as FrameworkElement);
             if (command == null)
             {
                 Debug.WriteLine("null");
