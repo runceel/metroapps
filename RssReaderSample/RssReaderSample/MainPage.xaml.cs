@@ -63,6 +63,11 @@ namespace RssReaderSample
             var addFeedFlyout = new AddFeedFlyout();
             // 横幅が画面幅 - 20より大きい場合は横幅を小さくする
             addFeedFlyout.Width = Math.Min(this.ActualWidth - 20, addFeedFlyout.Width);
+            // フィードの追加に成功した場合はAppBarを隠す
+            addFeedFlyout.AddFeedFinished += () =>
+            {
+                this.BottomAppBar.IsOpen = false;
+            };
 
             // Popupを作成
             var flyoutPopup = new Popup
@@ -79,6 +84,7 @@ namespace RssReaderSample
             // popupの位置を設定して表示
             Canvas.SetTop(flyoutPopup, point.Y);
             Canvas.SetLeft(flyoutPopup, point.X);
+
             flyoutPopup.IsOpen = true;
         }
 

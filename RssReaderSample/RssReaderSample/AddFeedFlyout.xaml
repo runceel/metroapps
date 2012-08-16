@@ -15,6 +15,7 @@
         <TextBlock HorizontalAlignment="Left" Margin="19,20,0,0" TextWrapping="Wrap" Text="フィードの追加" VerticalAlignment="Top" Style="{StaticResource TitleTextStyle}"/>
         <TextBox x:Name="textBoxUri" Margin="25,80,20,0" TextWrapping="Wrap" Text="{Binding Uri, Mode=TwoWay}" VerticalAlignment="Top"/>
         <Button Content="追加" HorizontalAlignment="Right" Margin="0,117,20,0" VerticalAlignment="Top" Width="64" Click="AddFeedButton_Click"/>
+        <TextBlock x:Name="textBlockMessage" HorizontalAlignment="Left" Margin="59,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Style="{StaticResource BaselineTextStyle}" Foreground="Red"/>
 
     </Grid>
 </UserControl>

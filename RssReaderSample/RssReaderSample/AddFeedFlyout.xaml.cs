@@ -19,6 +19,16 @@ namespace RssReaderSample
 {
     public sealed partial class AddFeedFlyout : UserControl
     {
+        public event Action AddFeedFinished;
+        private void RaiseAddFeedFinished()
+        {
+            var h = this.AddFeedFinished;
+            if (h != null)
+            {
+                h();
+            }
+        }
+
         public AddFeedFlyout()
         {
             this.InitializeComponent();
@@ -30,8 +40,11 @@ namespace RssReaderSample
             {
                 var popup = this.Parent as Popup;
                 popup.IsOpen = false;
+                this.RaiseAddFeedFinished();
                 return;
             }
+
+            this.textBlockMessage.Text = "URLを入力してください";
         }
     }
 }

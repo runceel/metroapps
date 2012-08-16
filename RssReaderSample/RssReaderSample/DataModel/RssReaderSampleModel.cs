@@ -88,7 +88,7 @@ namespace RssReaderSample.DataModel
             return true;
         }
 
-        public async Task Load()
+        public async Task Restore()
         {
             try
             {
@@ -96,7 +96,7 @@ namespace RssReaderSample.DataModel
                 using (var s = await file.OpenStreamForReadAsync())
                 using (var ms = new MemoryStream())
                 {
-                    this.Load(s);
+                    this.Restore(s);
                 }
             }
             catch (FileNotFoundException ex)
@@ -105,7 +105,7 @@ namespace RssReaderSample.DataModel
             }
         }
 
-        public void Load(Stream stream)
+        public void Restore(Stream stream)
         {
             try
             {
