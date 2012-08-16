@@ -69,6 +69,25 @@ namespace RssReaderSample.DataModel
             return this.Feeds.FirstOrDefault(i => i.Id == id);
         }
 
+        /// <summary>
+        /// 引数で指定したuriをフィードに登録する。uriが正しいフォーマットではない場合falseを返します。
+        /// </summary>
+        /// <param name="uri">登録するフィードのuri</param>
+        /// <returns>登録に成功したかどうかを返します。</returns>
+        public async Task<bool> AddAndLoadFeed(string uri)
+        {
+            Uri feedUri = null;
+            if (!Uri.TryCreate(uri, UriKind.Absolute, out feedUri))
+            {
+                return false;
+            }
+
+            var feed = new Feed { Uri = feedUri };
+            await feed.Load();
+            this.Feeds.Add(feed);
+            return true;
+        }
+
         public async Task Load()
         {
             try

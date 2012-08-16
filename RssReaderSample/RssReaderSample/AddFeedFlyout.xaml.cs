@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RssReaderSample.DataModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -21,6 +22,16 @@ namespace RssReaderSample
         public AddFeedFlyout()
         {
             this.InitializeComponent();
+        }
+
+        private async void AddFeedButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (await RssReaderSampleModel.GetDefault().AddAndLoadFeed(this.textBoxUri.Text))
+            {
+                var popup = this.Parent as Popup;
+                popup.IsOpen = false;
+                return;
+            }
         }
     }
 }
