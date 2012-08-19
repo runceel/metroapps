@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Data;
 namespace HelloWorldApp.Common
 {
     /// <summary>
-    /// Value converter that translates true to false and vice versa.
+    /// true を false に、および false を true に変換する値コンバーター。
     /// </summary>
     public sealed class BooleanNegationConverter : IValueConverter
     {

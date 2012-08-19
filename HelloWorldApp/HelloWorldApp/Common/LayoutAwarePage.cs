@@ -14,22 +14,22 @@ using Windows.UI.Xaml.Navigation;
 namespace HelloWorldApp.Common
 {
     /// <summary>
-    /// Typical implementation of Page that provides several important conveniences:
+    /// Page を一般的な方法で実装すると、重要かつ便利な機能をいくつか使用できます:
     /// <list type="bullet">
     /// <item>
-    /// <description>Application view state to visual state mapping</description>
+    /// <description>アプリケーションのビューステートと表示状態のマップ</description>
     /// </item>
     /// <item>
-    /// <description>GoBack, GoForward, and GoHome event handlers</description>
+    /// <description>GoBack、GoForward、および GoHome イベント ハンドラー</description>
     /// </item>
     /// <item>
-    /// <description>Mouse and keyboard shortcuts for navigation</description>
+    /// <description>ナビゲーション用のマウスおよびキーボードのショートカット</description>
     /// </item>
     /// <item>
-    /// <description>State management for navigation and process lifetime management</description>
+    /// <description>ナビゲーションの状態管理およびプロセス継続時間管理</description>
     /// </item>
     /// <item>
-    /// <description>A default view model</description>
+    /// <description>既定のビュー モデル</description>
     /// </item>
     /// </list>
     /// </summary>
@@ -37,7 +37,7 @@ namespace HelloWorldApp.Common
     public class LayoutAwarePage : Page
     {
         /// <summary>
-        /// Identifies the <see cref="DefaultViewModel"/> dependency property.
+        /// <see cref="DefaultViewModel"/> 依存関係プロパティを識別します。
         /// </summary>
         public static readonly DependencyProperty DefaultViewModelProperty =
             DependencyProperty.Register("DefaultViewModel", typeof(IObservableMap<String, Object>),
@@ -46,27 +46,27 @@ namespace HelloWorldApp.Common
         private List<Control> _layoutAwareControls;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LayoutAwarePage"/> class.
+        /// <see cref="LayoutAwarePage"/> クラスの新しいインスタンスを初期化します。
         /// </summary>
         public LayoutAwarePage()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
 
-            // Create an empty default view model
+            // 空の既定のビュー モデルを作成します
             this.DefaultViewModel = new ObservableDictionary<String, Object>();
 
-            // When this page is part of the visual tree make two changes:
-            // 1) Map application view state to visual state for the page
-            // 2) Handle keyboard and mouse navigation requests
+            // このページがビジュアル ツリーの一部である場合、次の 2 つの変更を行います:
+            // 1) アプリケーションのビューステートをページの表示状態にマップする
+            // 2) キーボードおよびマウスのナビゲーション要求を処理する
             this.Loaded += (sender, e) =>
             {
                 this.StartLayoutUpdates(sender, e);
 
-                // Keyboard and mouse navigation only apply when occupying the entire window
+                // キーボードおよびマウスのナビゲーションは、ウィンドウ全体を使用する場合のみ適用されます
                 if (this.ActualHeight == Window.Current.Bounds.Height &&
                     this.ActualWidth == Window.Current.Bounds.Width)
                 {
-                    // Listen to the window directly so focus isn't required
+                    // ウィンドウで直接待機するため、フォーカスは不要です
                     Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=
                         CoreDispatcher_AcceleratorKeyActivated;
                     Window.Current.CoreWindow.PointerPressed +=
@@ -74,7 +74,7 @@ namespace HelloWorldApp.Common
                 }
             };
 
-            // Undo the same changes when the page is no longer visible
+            // ページが表示されない場合、同じ変更を元に戻します
             this.Unloaded += (sender, e) =>
             {
                 this.StopLayoutUpdates(sender, e);
@@ -86,8 +86,8 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// An implementation of <see cref="IObservableMap&lt;String, Object&gt;"/> designed to be
-        /// used as a trivial view model.
+        /// <see cref="IObservableMap&lt;String, Object&gt;"/> の実装です。これは、
+        /// 単純なビュー モデルとして使用されるように設計されています。
         /// </summary>
         protected IObservableMap<String, Object> DefaultViewModel
         {
@@ -102,17 +102,17 @@ namespace HelloWorldApp.Common
             }
         }
 
-        #region Navigation support
+        #region ナビゲーション サポート
 
         /// <summary>
-        /// Invoked as an event handler to navigate backward in the page's associated
-        /// <see cref="Frame"/> until it reaches the top of the navigation stack.
+        /// イベント ハンドラーとして呼び出され、ページの関連付けられた <see cref="Frame"/> で前に戻ります。
+        /// ナビゲーション スタックの上部に到達するまで戻ります。
         /// </summary>
-        /// <param name="sender">Instance that triggered the event.</param>
-        /// <param name="e">Event data describing the conditions that led to the event.</param>
+        /// <param name="sender">イベントをトリガーしたインスタンス。</param>
+        /// <param name="e">イベントが発生する条件を説明するイベント データ。</param>
         protected virtual void GoHome(object sender, RoutedEventArgs e)
         {
-            // Use the navigation frame to return to the topmost page
+            // ナビゲーション フレームを使用して最上位のページに戻ります
             if (this.Frame != null)
             {
                 while (this.Frame.CanGoBack) this.Frame.GoBack();
@@ -120,45 +120,45 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// Invoked as an event handler to navigate backward in the navigation stack
-        /// associated with this page's <see cref="Frame"/>.
+        /// イベント ハンドラーとして呼び出され、このページの <see cref="Frame"/> に関連付けられた
+        /// ナビゲーション スタックで前に戻ります。
         /// </summary>
-        /// <param name="sender">Instance that triggered the event.</param>
-        /// <param name="e">Event data describing the conditions that led to the
-        /// event.</param>
+        /// <param name="sender">イベントをトリガーしたインスタンス。</param>
+        /// <param name="e">イベントが発生する条件を説明する
+        /// イベント データ。</param>
         protected virtual void GoBack(object sender, RoutedEventArgs e)
         {
-            // Use the navigation frame to return to the previous page
+            // ナビゲーション フレームを使用して前のページに戻ります
             if (this.Frame != null && this.Frame.CanGoBack) this.Frame.GoBack();
         }
 
         /// <summary>
-        /// Invoked as an event handler to navigate forward in the navigation stack
-        /// associated with this page's <see cref="Frame"/>.
+        /// イベント ハンドラーとして呼び出され、このページの <see cref="Frame"/> に関連付けられた
+        /// ナビゲーション スタックで前に戻ります。
         /// </summary>
-        /// <param name="sender">Instance that triggered the event.</param>
-        /// <param name="e">Event data describing the conditions that led to the
-        /// event.</param>
+        /// <param name="sender">イベントをトリガーしたインスタンス。</param>
+        /// <param name="e">イベントが発生する条件を説明する
+        /// イベント データ。</param>
         protected virtual void GoForward(object sender, RoutedEventArgs e)
         {
-            // Use the navigation frame to move to the next page
+            // ナビゲーション フレームを使用して次のページに進みます
             if (this.Frame != null && this.Frame.CanGoForward) this.Frame.GoForward();
         }
 
         /// <summary>
-        /// Invoked on every keystroke, including system keys such as Alt key combinations, when
-        /// this page is active and occupies the entire window.  Used to detect keyboard navigation
-        /// between pages even when the page itself doesn't have focus.
+        /// このページがアクティブで、ウィンドウ全体を使用する場合、Alt キーの組み合わせなどのシステム キーを含む、
+        /// キーボード操作で呼び出されます。ページがフォーカスされていないときでも、
+        /// ページ間のキーボード ナビゲーションの検出に使用されます。
         /// </summary>
-        /// <param name="sender">Instance that triggered the event.</param>
-        /// <param name="args">Event data describing the conditions that led to the event.</param>
+        /// <param name="sender">イベントをトリガーしたインスタンス。</param>
+        /// <param name="args">イベントが発生する条件を説明するイベント データ。</param>
         private void CoreDispatcher_AcceleratorKeyActivated(CoreDispatcher sender,
             AcceleratorKeyEventArgs args)
         {
             var virtualKey = args.VirtualKey;
 
-            // Only investigate further when Left, Right, or the dedicated Previous or Next keys
-            // are pressed
+            // 左方向キーや右方向キー、または専用に設定した前に戻るキーや次に進むキーを押した場合のみ、
+            // 詳細を調査します
             if ((args.EventType == CoreAcceleratorKeyEventType.SystemKeyDown ||
                 args.EventType == CoreAcceleratorKeyEventType.KeyDown) &&
                 (virtualKey == VirtualKey.Left || virtualKey == VirtualKey.Right ||
@@ -175,14 +175,14 @@ namespace HelloWorldApp.Common
                 if (((int)virtualKey == 166 && noModifiers) ||
                     (virtualKey == VirtualKey.Left && onlyAlt))
                 {
-                    // When the previous key or Alt+Left are pressed navigate back
+                    // 前に戻るキーまたは Alt キーを押しながら左方向キーを押すと前に戻ります
                     args.Handled = true;
                     this.GoBack(this, new RoutedEventArgs());
                 }
                 else if (((int)virtualKey == 167 && noModifiers) ||
                     (virtualKey == VirtualKey.Right && onlyAlt))
                 {
-                    // When the next key or Alt+Right are pressed navigate forward
+                    // 次に進むキーまたは Alt キーを押しながら右方向キーを押すと次に進みます
                     args.Handled = true;
                     this.GoForward(this, new RoutedEventArgs());
                 }
@@ -190,22 +190,22 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// Invoked on every mouse click, touch screen tap, or equivalent interaction when this
-        /// page is active and occupies the entire window.  Used to detect browser-style next and
-        /// previous mouse button clicks to navigate between pages.
+        /// このページがアクティブで、ウィンドウ全体を使用する場合、マウスのクリック、タッチ スクリーンのタップなどの
+        /// 操作で呼び出されます。ページ間を移動するため、マウス ボタンのクリックによるブラウザー スタイルの
+        /// 次に進むおよび前に戻る操作の検出に使用されます。
         /// </summary>
-        /// <param name="sender">Instance that triggered the event.</param>
-        /// <param name="args">Event data describing the conditions that led to the event.</param>
+        /// <param name="sender">イベントをトリガーしたインスタンス。</param>
+        /// <param name="args">イベントが発生する条件を説明するイベント データ。</param>
         private void CoreWindow_PointerPressed(CoreWindow sender,
             PointerEventArgs args)
         {
             var properties = args.CurrentPoint.Properties;
 
-            // Ignore button chords with the left, right, and middle buttons
+            // 左、右、および中央ボタンを使用したボタン操作を無視します
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
                 properties.IsMiddleButtonPressed) return;
 
-            // If back or foward are pressed (but not both) navigate appropriately
+            // [戻る] または [進む] を押すと適切に移動します (両方同時には押しません)
             bool backPressed = properties.IsXButton1Pressed;
             bool forwardPressed = properties.IsXButton2Pressed;
             if (backPressed ^ forwardPressed)
@@ -218,23 +218,23 @@ namespace HelloWorldApp.Common
 
         #endregion
 
-        #region Visual state switching
+        #region 表示状態の切り替え
 
         /// <summary>
-        /// Invoked as an event handler, typically on the <see cref="FrameworkElement.Loaded"/>
-        /// event of a <see cref="Control"/> within the page, to indicate that the sender should
-        /// start receiving visual state management changes that correspond to application view
-        /// state changes.
+        /// イベント ハンドラーとして呼び出されます。これは通常、ページ内の <see cref="Control"/> の
+        /// <see cref="FrameworkElement.Loaded"/> イベントで呼び出され、送信元が
+        /// アプリケーションのビューステートの変更に対応する表示状態管理の変更を受信開始する必要があることを
+        /// 示します。
         /// </summary>
-        /// <param name="sender">Instance of <see cref="Control"/> that supports visual state
-        /// management corresponding to view states.</param>
-        /// <param name="e">Event data that describes how the request was made.</param>
-        /// <remarks>The current view state will immediately be used to set the corresponding
-        /// visual state when layout updates are requested.  A corresponding
-        /// <see cref="FrameworkElement.Unloaded"/> event handler connected to
-        /// <see cref="StopLayoutUpdates"/> is strongly encouraged.  Instances of
-        /// <see cref="LayoutAwarePage"/> automatically invoke these handlers in their Loaded and
-        /// Unloaded events.</remarks>
+        /// <param name="sender">ビューステートに対応する表示状態管理をサポートする 
+        /// <see cref="Control"/> のインスタンス。</param>
+        /// <param name="e">要求がどのように行われたかを説明するイベント データ。</param>
+        /// <remarks>現在のビューステートは、レイアウトの更新が要求されると、
+        /// 対応する表示状態を設定するためすぐに使用されます。対応する 
+        /// <see cref="FrameworkElement.Unloaded"/> イベント ハンドラーを
+        /// <see cref="StopLayoutUpdates"/> に接続しておくことを強くお勧めします。
+        /// <see cref="LayoutAwarePage"/> のインスタンスは、Loaded および Unloaded イベントでこれらのハンドラーを自動的に
+        /// 呼び出します。</remarks>
         /// <seealso cref="DetermineVisualState"/>
         /// <seealso cref="InvalidateVisualState"/>
         public void StartLayoutUpdates(object sender, RoutedEventArgs e)
@@ -243,13 +243,13 @@ namespace HelloWorldApp.Common
             if (control == null) return;
             if (this._layoutAwareControls == null)
             {
-                // Start listening to view state changes when there are controls interested in updates
+                // 更新の対象となるコントロールがある場合、ビューステートの変更の待機を開始します
                 Window.Current.SizeChanged += this.WindowSizeChanged;
                 this._layoutAwareControls = new List<Control>();
             }
             this._layoutAwareControls.Add(control);
 
-            // Set the initial visual state of the control
+            // コントロールの最初の表示状態を設定します
             VisualStateManager.GoToState(control, DetermineVisualState(ApplicationView.Value), false);
         }
 
@@ -259,15 +259,15 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// Invoked as an event handler, typically on the <see cref="FrameworkElement.Unloaded"/>
-        /// event of a <see cref="Control"/>, to indicate that the sender should start receiving
-        /// visual state management changes that correspond to application view state changes.
+        /// これは通常、<see cref="Control"/> の
+        /// <see cref="FrameworkElement.Unloaded"/> イベントでイベント ハンドラーとして呼び出され、送信元がアプリケーションのビューステートの変更に対応する
+        /// ビューステートの変更に対応する表示状態管理の変更を受信開始する必要があることを示します。
         /// </summary>
-        /// <param name="sender">Instance of <see cref="Control"/> that supports visual state
-        /// management corresponding to view states.</param>
-        /// <param name="e">Event data that describes how the request was made.</param>
-        /// <remarks>The current view state will immediately be used to set the corresponding
-        /// visual state when layout updates are requested.</remarks>
+        /// <param name="sender">ビューステートに対応する表示状態管理をサポートする 
+        /// <see cref="Control"/> のインスタンス。</param>
+        /// <param name="e">要求がどのように行われたかを説明するイベント データ。</param>
+        /// <remarks>現在のビューステートは、レイアウトの更新が要求されると、
+        /// 表示状態を設定するためすぐに使用されます。</remarks>
         /// <seealso cref="StartLayoutUpdates"/>
         public void StopLayoutUpdates(object sender, RoutedEventArgs e)
         {
@@ -276,20 +276,20 @@ namespace HelloWorldApp.Common
             this._layoutAwareControls.Remove(control);
             if (this._layoutAwareControls.Count == 0)
             {
-                // Stop listening to view state changes when no controls are interested in updates
+                // 更新の対象となるコントロールがない場合、ビューステートの変更の待機を停止します
                 this._layoutAwareControls = null;
                 Window.Current.SizeChanged -= this.WindowSizeChanged;
             }
         }
 
         /// <summary>
-        /// Translates <see cref="ApplicationViewState"/> values into strings for visual state
-        /// management within the page.  The default implementation uses the names of enum values.
-        /// Subclasses may override this method to control the mapping scheme used.
+        /// <see cref="ApplicationViewState"/> 値を、ページ内の表示状態管理で使用できる文字列に
+        /// 変換します。既定の実装では列挙値の名前を使用します。
+        /// サブクラスでこのメソッドをオーバーライドして、使用されているマップ スキームを制御する場合があります。
         /// </summary>
-        /// <param name="viewState">View state for which a visual state is desired.</param>
-        /// <returns>Visual state name used to drive the
-        /// <see cref="VisualStateManager"/></returns>
+        /// <param name="viewState">表示状態が必要なビューステート。</param>
+        /// <returns><see cref="VisualStateManager"/> の実行に使用される
+        /// 表示状態の名前</returns>
         /// <seealso cref="InvalidateVisualState"/>
         protected virtual string DetermineVisualState(ApplicationViewState viewState)
         {
@@ -297,13 +297,13 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// Updates all controls that are listening for visual state changes with the correct
-        /// visual state.
+        /// 適切な表示状態を使用した表示状態の変更を待機しているすべてのコントロールを更新し
+        /// ます。
         /// </summary>
         /// <remarks>
-        /// Typically used in conjunction with overriding <see cref="DetermineVisualState"/> to
-        /// signal that a different value may be returned even though the view state has not
-        /// changed.
+        /// 通常、ビューステートが変更されていない場合でも、別の値が返される可能性がある事を知らせるために
+        /// <see cref="DetermineVisualState"/> をオーバーライドすることで
+        /// 使用されます。
         /// </remarks>
         public void InvalidateVisualState()
         {
@@ -319,18 +319,18 @@ namespace HelloWorldApp.Common
 
         #endregion
 
-        #region Process lifetime management
+        #region プロセス継続時間管理
 
         private String _pageKey;
 
         /// <summary>
-        /// Invoked when this page is about to be displayed in a Frame.
+        /// このページがフレームに表示されるときに呼び出されます。
         /// </summary>
-        /// <param name="e">Event data that describes how this page was reached.  The Parameter
-        /// property provides the group to be displayed.</param>
+        /// <param name="e">このページにどのように到達したかを説明するイベント データ。Parameter 
+        /// プロパティは、表示するグループを示します。</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            // Returning to a cached page through navigation shouldn't trigger state loading
+            // ナビゲーションを通じてキャッシュ ページに戻るときに、状態の読み込みが発生しないようにします
             if (this._pageKey != null) return;
 
             var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
@@ -338,8 +338,8 @@ namespace HelloWorldApp.Common
 
             if (e.NavigationMode == NavigationMode.New)
             {
-                // Clear existing state for forward navigation when adding a new page to the
-                // navigation stack
+                // 新しいページをナビゲーション スタックに追加するとき、次に進むナビゲーションの
+                // 既存の状態をクリアします
                 var nextPageKey = this._pageKey;
                 int nextPageIndex = this.Frame.BackStackDepth;
                 while (frameState.Remove(nextPageKey))
@@ -348,23 +348,23 @@ namespace HelloWorldApp.Common
                     nextPageKey = "Page-" + nextPageIndex;
                 }
 
-                // Pass the navigation parameter to the new page
+                // ナビゲーション パラメーターを新しいページに渡します
                 this.LoadState(e.Parameter, null);
             }
             else
             {
-                // Pass the navigation parameter and preserved page state to the page, using
-                // the same strategy for loading suspended state and recreating pages discarded
-                // from cache
+                // ナビゲーション パラメーターおよび保存されたページの状態をページに渡します。
+                // このとき、中断状態の読み込みや、キャッシュから破棄されたページの再作成と同じ対策を
+                // 使用します
                 this.LoadState(e.Parameter, (Dictionary<String, Object>)frameState[this._pageKey]);
             }
         }
 
         /// <summary>
-        /// Invoked when this page will no longer be displayed in a Frame.
+        /// このページがフレームに表示されなくなるときに呼び出されます。
         /// </summary>
-        /// <param name="e">Event data that describes how this page was reached.  The Parameter
-        /// property provides the group to be displayed.</param>
+        /// <param name="e">このページにどのように到達したかを説明するイベント データ。Parameter 
+        /// プロパティは、表示するグループを示します。</param>
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
@@ -374,24 +374,24 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// Populates the page with content passed during navigation.  Any saved state is also
-        /// provided when recreating a page from a prior session.
+        /// このページには、移動中に渡されるコンテンツを設定します。前のセッションからページを
+        /// 再作成する場合は、保存状態も指定されます。
         /// </summary>
-        /// <param name="navigationParameter">The parameter value passed to
-        /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested.
+        /// <param name="navigationParameter">このページが最初に要求されたときに
+        /// <see cref="Frame.Navigate(Type, Object)"/> に渡されたパラメーター値。
         /// </param>
-        /// <param name="pageState">A dictionary of state preserved by this page during an earlier
-        /// session.  This will be null the first time a page is visited.</param>
+        /// <param name="pageState">前のセッションでこのページによって保存された状態の
+        /// ディクショナリ。ページに初めてアクセスするとき、状態は null になります。</param>
         protected virtual void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
         }
 
         /// <summary>
-        /// Preserves state associated with this page in case the application is suspended or the
-        /// page is discarded from the navigation cache.  Values must conform to the serialization
-        /// requirements of <see cref="SuspensionManager.SessionState"/>.
+        /// アプリケーションが中断される場合、またはページがナビゲーション キャッシュから破棄される場合、
+        /// このページに関連付けられた状態を保存します。値は、
+        /// <see cref="SuspensionManager.SessionState"/> のシリアル化の要件に準拠する必要があります。
         /// </summary>
-        /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
+        /// <param name="pageState">シリアル化可能な状態で作成される空のディクショナリ。</param>
         protected virtual void SaveState(Dictionary<String, Object> pageState)
         {
         }
@@ -399,8 +399,8 @@ namespace HelloWorldApp.Common
         #endregion
 
         /// <summary>
-        /// Implementation of IObservableMap that supports reentrancy for use as a default view
-        /// model.
+        /// IObservableMap の実装では、既定のビュー モデルとして使用するため、再入をサポート
+        /// しています。 
         /// </summary>
         private class ObservableDictionary<K, V> : IObservableMap<K, V>
         {
@@ -424,7 +424,7 @@ namespace HelloWorldApp.Common
                 var eventHandler = MapChanged;
                 if (eventHandler != null)
                 {
-                    eventHandler(this, new ObservableDictionaryChangedEventArgs(CollectionChange.ItemInserted, key));
+                    eventHandler(this, new ObservableDictionaryChangedEventArgs(change, key));
                 }
             }
 

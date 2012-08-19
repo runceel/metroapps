@@ -11,12 +11,12 @@ using Windows.UI.Xaml.Documents;
 namespace HelloWorldApp.Common
 {
     /// <summary>
-    /// Wrapper for <see cref="RichTextBlock"/> that creates as many additional overflow
-    /// columns as needed to fit the available content.
+    /// <see cref="RichTextBlock"/> のラッパーは、使用可能なコンテンツに合わせて、
+    /// 必要なオーバーフロー列を追加で作成します。
     /// </summary>
     /// <example>
-    /// The following creates a collection of 400-pixel wide columns spaced 50 pixels apart
-    /// to contain arbitrary data-bound content:
+    /// 以下では、400 ピクセル幅の列に 50 ピクセルの余白が指定されたコレクションを作成します。
+    /// これには、データ バインドされた任意のコンテンツが含まれます:
     /// <code>
     /// <RichTextColumns>
     ///     <RichTextColumns.ColumnTemplate>
@@ -33,28 +33,28 @@ namespace HelloWorldApp.Common
     /// </RichTextColumns>
     /// </code>
     /// </example>
-    /// <remarks>Typically used in a horizontally scrolling region where an unbounded amount of
-    /// space allows for all needed columns to be created.  When used in a vertically scrolling
-    /// space there will never be any additional columns.</remarks>
+    /// <remarks>通常、バインドされていない領域で必要なすべての列を作成できる、
+    /// 水平方向のスクロール領域で使用されます。垂直方向のスクロール領域で使用する場合、
+    /// 列を追加で作成することはできません。</remarks>
     [Windows.UI.Xaml.Markup.ContentProperty(Name = "RichTextContent")]
     public sealed class RichTextColumns : Panel
     {
         /// <summary>
-        /// Identifies the <see cref="RichTextContent"/> dependency property.
+        /// <see cref="RichTextContent"/> 依存関係プロパティを識別します。
         /// </summary>
         public static readonly DependencyProperty RichTextContentProperty =
             DependencyProperty.Register("RichTextContent", typeof(RichTextBlock),
             typeof(RichTextColumns), new PropertyMetadata(null, ResetOverflowLayout));
 
         /// <summary>
-        /// Identifies the <see cref="ColumnTemplate"/> dependency property.
+        /// <see cref="ColumnTemplate"/> 依存関係プロパティを識別します。
         /// </summary>
         public static readonly DependencyProperty ColumnTemplateProperty =
             DependencyProperty.Register("ColumnTemplate", typeof(DataTemplate),
             typeof(RichTextColumns), new PropertyMetadata(null, ResetOverflowLayout));
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RichTextColumns"/> class.
+        /// <see cref="RichTextColumns"/> クラスの新しいインスタンスを初期化します。
         /// </summary>
         public RichTextColumns()
         {
@@ -62,7 +62,7 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// Gets or sets the initial rich text content to be used as the first column.
+        /// 最初のリッチ テキスト コンテンツを 1 つ目の列として使用するように取得または設定します。
         /// </summary>
         public RichTextBlock RichTextContent
         {
@@ -71,8 +71,8 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// Gets or sets the template used to create additional
-        /// <see cref="RichTextBlockOverflow"/> instances.
+        /// 追加の <see cref="RichTextBlockOverflow"/> インスタンスを
+        /// 作成するために使用するテンプレートを取得または設定します。
         /// </summary>
         public DataTemplate ColumnTemplate
         {
@@ -81,14 +81,14 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// Invoked when the content or overflow template is changed to recreate the column layout.
+        /// 列のレイアウトを再作成するため、コンテンツまたはオーバーフローのテンプレートを変更するときに呼び出されます。
         /// </summary>
-        /// <param name="d">Instance of <see cref="RichTextColumns"/> where the change
-        /// occurred.</param>
-        /// <param name="e">Event data describing the specific change.</param>
+        /// <param name="d">変更が発生した <see cref="RichTextColumns"/> の
+        /// インスタンス。</param>
+        /// <param name="e">特定の変更を説明するイベント データ。</param>
         private static void ResetOverflowLayout(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // When dramatic changes occur, rebuild the column layout from scratch
+            // 大幅な変更が行われた場合は、最初から列のレイアウトをビルドし直します
             var target = d as RichTextColumns;
             if (target != null)
             {
@@ -99,44 +99,44 @@ namespace HelloWorldApp.Common
         }
 
         /// <summary>
-        /// Lists overflow columns already created.  Must maintain a 1:1 relationship with
-        /// instances in the <see cref="Panel.Children"/> collection following the initial
-        /// RichTextBlock child.
+        /// 既に作成されたオーバーフロー列を一覧表示します。
+        /// 最初の子として RichTextBlock を含む <see cref="Panel.Children"/> コレクションのインスタンスは
+        /// 1:1 の関係を保持する必要があります。
         /// </summary>
         private List<RichTextBlockOverflow> _overflowColumns = null;
 
         /// <summary>
-        /// Determines whether additional overflow columns are needed and if existing columns can
-        /// be removed.
+        /// 追加のオーバーフロー列が必要かどうか、および既存の列を削除できるかどうかを
+        /// 指定します。
         /// </summary>
-        /// <param name="availableSize">The size of the space available, used to constrain the
-        /// number of additional columns that can be created.</param>
-        /// <returns>The resulting size of the original content plus any extra columns.</returns>
+        /// <param name="availableSize">空き領域のサイズは、作成できる追加の列の
+        /// 数の制限に使用されます。</param>
+        /// <returns>元のコンテンツと追加の列を合わせた最終的なサイズ。</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
             if (this.RichTextContent == null) return new Size(0, 0);
 
-            // Make sure the RichTextBlock is a child, using the lack of
-            // a list of additional columns as a sign that this hasn't been
-            // done yet
+            // RichTextBlock を子に指定するようにします。このとき、
+            // 未完了であることを示すため、追加の列の一覧の不足箇所を
+            // 使用します
             if (this._overflowColumns == null)
             {
                 Children.Add(this.RichTextContent);
                 this._overflowColumns = new List<RichTextBlockOverflow>();
             }
 
-            // Start by measuring the original RichTextBlock content
+            // 最初は元の RichTextBlock コンテンツを基準にします
             this.RichTextContent.Measure(availableSize);
             var maxWidth = this.RichTextContent.DesiredSize.Width;
             var maxHeight = this.RichTextContent.DesiredSize.Height;
             var hasOverflow = this.RichTextContent.HasOverflowContent;
 
-            // Make sure there are enough overflow columns
+            // オーバーフロー列を十分に確保します
             int overflowIndex = 0;
             while (hasOverflow && maxWidth < availableSize.Width && this.ColumnTemplate != null)
             {
-                // Use existing overflow columns until we run out, then create
-                // more from the supplied template
+                // 既存のオーバーフロー列がなくなるまで使用した後、
+                // 指定のテンプレートから作成します
                 RichTextBlockOverflow overflow;
                 if (this._overflowColumns.Count > overflowIndex)
                 {
@@ -157,7 +157,7 @@ namespace HelloWorldApp.Common
                     }
                 }
 
-                // Measure the new column and prepare to repeat as necessary
+                // 新しい列を基準にして、必要に応じて繰り返しの設定を行います
                 overflow.Measure(new Size(availableSize.Width - maxWidth, availableSize.Height));
                 maxWidth += overflow.DesiredSize.Width;
                 maxHeight = Math.Max(maxHeight, overflow.DesiredSize.Height);
@@ -165,8 +165,8 @@ namespace HelloWorldApp.Common
                 overflowIndex++;
             }
 
-            // Disconnect extra columns from the overflow chain, remove them from our private list
-            // of columns, and remove them as children
+            // 不要な列をオーバーフロー チェーンから切断し、列のプライベート リストから削除して、
+            // 子として削除します
             if (this._overflowColumns.Count > overflowIndex)
             {
                 if (overflowIndex == 0)
@@ -184,16 +184,16 @@ namespace HelloWorldApp.Common
                 }
             }
 
-            // Report final determined size
+            // 最終的に決定したサイズを報告します
             return new Size(maxWidth, maxHeight);
         }
 
         /// <summary>
-        /// Arranges the original content and all extra columns.
+        /// 元のコンテンツと追加されたすべての列を整列します。
         /// </summary>
-        /// <param name="finalSize">Defines the size of the area the children must be arranged
-        /// within.</param>
-        /// <returns>The size of the area the children actually required.</returns>
+        /// <param name="finalSize">中で子を整列する必要がある領域のサイズを
+        /// 定義します。</param>
+        /// <returns>子が実際に必要とする領域のサイズ。</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
             double maxWidth = 0;

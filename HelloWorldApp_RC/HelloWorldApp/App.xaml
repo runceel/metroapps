@@ -1,0 +1,16 @@
+﻿<Application
+    x:Class="HelloWorldApp.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HelloWorldApp"
+    xmlns:localData="using:HelloWorldApp.Data">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Common/StandardStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <x:String x:Key="AppName">HelloWorldApp</x:String>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -14,8 +14,8 @@ using Windows.UI.Xaml.Data;
 namespace HelloWorldApp.Common
 {
     /// <summary>
-    /// Value converter that translates true to <see cref="Visibility.Visible"/> and false to
-    /// <see cref="Visibility.Collapsed"/>.
+    /// true を <see cref="Visibility.Visible"/> に、および false を 
+    /// <see cref="Visibility.Collapsed"/> に変換する値コンバーター。
     /// </summary>
     public sealed class BooleanToVisibilityConverter : IValueConverter
     {

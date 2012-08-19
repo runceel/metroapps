@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
 
-  <Identity Name="3790f76c-a4c6-409d-bb9a-c1ca6ed1e72f"
+  <Identity Name="2a9c08a9-fa59-4d35-ae33-5232543cb08f"
             Publisher="CN=Kazuki"
             Version="1.0.0.0" />
 
@@ -12,8 +12,8 @@
   </Properties>
 
   <Prerequisites>
-    <OSMinVersion>6.2.0</OSMinVersion>
-    <OSMaxVersionTested>6.2.0</OSMaxVersionTested>
+    <OSMinVersion>6.2.1</OSMinVersion>
+    <OSMaxVersionTested>6.2.1</OSMaxVersionTested>
   </Prerequisites>
 
   <Resources>

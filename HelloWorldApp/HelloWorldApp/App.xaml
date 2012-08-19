@@ -8,8 +8,16 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+
+                <!-- 
+                    プラットフォームの外観の共通の要素を定義するスタイル
+                    Visual Studio プロジェクトおよびアイテム テンプレートで必要です
+                 -->
                 <ResourceDictionary Source="Common/StandardStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <!--アプリケーション固有のリソース -->
+
             <x:String x:Key="AppName">HelloWorldApp</x:String>
         </ResourceDictionary>
     </Application.Resources>
