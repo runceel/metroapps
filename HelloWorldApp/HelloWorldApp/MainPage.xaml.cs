@@ -54,28 +54,7 @@ namespace HelloWorldApp
 
         private void buttonGreet_Click(object sender, RoutedEventArgs e)
         {
-            // 出力メッセージのフォーマットを格納するための変数
-            string format = null;
-
-            // 選択項目に応じて出力メッセージのフォーマットを設定する
-            switch ((string)comboBoxTime.SelectedValue)
-            {
-                case "朝":
-                    format = "おはようございます。{0}さん。";
-                    break;
-                case "昼":
-                    format = "こんにちは。{0}さん。";
-                    break;
-                case "晩":
-                    format = "こんばんは。{0}さん。";
-                    break;
-                default:
-                    // 朝と昼と晩しかありえない
-                    throw new InvalidOperationException("不正な値");
-            }
-
-            // 出力メッセージをテキストブロックに設定する
-            textBlockMessage.Text = string.Format(format, textBoxName.Text);
+            HelloWorldModel.GetDefault().Greet();
         }
     }
 }

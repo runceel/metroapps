@@ -52,13 +52,16 @@
             <Button x:Name="backButton" Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
             <TextBlock x:Name="pageTitle" Grid.Column="1" Text="{StaticResource AppName}" Style="{StaticResource PageHeaderTextStyle}"/>
         </Grid>
-        <TextBox x:Name="textBoxName" HorizontalAlignment="Left" Margin="120,10,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="420" Text="{Binding HelloWorldModel.Name, Mode=TwoWay}"/>
-        <ComboBox x:Name="comboBoxTime" HorizontalAlignment="Left" Margin="545,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" SelectedValuePath="Content">
-            <ComboBoxItem Content="朝" IsSelected="True"/>
-            <ComboBoxItem Content="昼"/>
-            <ComboBoxItem Content="晩"/>
-        </ComboBox>
-        <TextBlock x:Name="textBlockMessage" HorizontalAlignment="Left" Margin="120,47,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Style="{StaticResource BodyTextStyle}"/>
+        <Grid Margin="120,10,701,561" Grid.Row="1">
+        	<TextBox x:Name="textBoxName" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="420" Text="{Binding HelloWorldModel.Name, Mode=TwoWay}"/>
+        	<ComboBox x:Name="comboBoxTime" HorizontalAlignment="Left" Margin="425,0,0,0" VerticalAlignment="Top" Width="120" SelectedValuePath="Content" SelectedValue="{Binding HelloWorldModel.Time, Mode=TwoWay}">
+        		<ComboBoxItem Content="朝" IsSelected="True"/>
+        		<ComboBoxItem Content="昼"/>
+        		<ComboBoxItem Content="晩"/>
+        	</ComboBox>
+        	<TextBlock x:Name="textBlockMessage" HorizontalAlignment="Left" Margin="0,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Style="{StaticResource BodyTextStyle}" Text="{Binding HelloWorldModel.Message}"/>
+
+        </Grid>
 
         <VisualStateManager.VisualStateGroups>
 

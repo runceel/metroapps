@@ -45,7 +45,8 @@ namespace HelloWorldApp.DataModel
             set { this.SetProperty(ref this.message, value); }
         }
 
-        private string time;
+        // デフォルト値は朝
+        private string time = "朝";
         /// <summary>
         /// 時間帯を取得または設定します。有効な値は朝・昼・晩のいずれかです。
         /// </summary>
