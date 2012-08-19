@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HelloWorldApp.DataModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -37,6 +38,8 @@ namespace HelloWorldApp
         /// ディクショナリ。ページに初めてアクセスするとき、状態は null になります。</param>
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
+            // DefaultViewModelのHelloWorldModelをキーにしてHelloWorldModelのインスタンスを設定する
+            this.DefaultViewModel["HelloWorldModel"] = HelloWorldModel.GetDefault();
         }
 
         /// <summary>
