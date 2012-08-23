@@ -77,7 +77,7 @@ namespace RssReaderSample
                 // ナビゲーション スタックが復元されていない場合、最初のページに移動します。
                 // このとき、必要な情報をナビゲーション パラメーターとして渡して、新しいページを
                 // を構成します
-                if (!rootFrame.Navigate(typeof(GroupedItemsPage), "AllGroups"))
+                if (!rootFrame.Navigate(typeof(MainPage)))
                 {
                     throw new Exception("Failed to create initial page");
                 }

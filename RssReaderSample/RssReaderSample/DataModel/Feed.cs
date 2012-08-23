@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Web.Syndication;
 
 namespace RssReaderSample.DataModel
 {
@@ -55,5 +57,42 @@ namespace RssReaderSample.DataModel
             get { return this.feedItems; }
             set { this.SetProperty(ref this.feedItems, value); }
         }
+
+        /// <summary>
+        /// 指定されたUriのFeedを読み込みます。
+        /// </summary>
+        /// <returns></returns>
+        public async Task Load()
+        {
+            try
+            {
+                // フィードを読み込み、FeedクラスとFeedItemを組み立てる。
+                var client = new SyndicationClient();
+                var feed = await client.RetrieveFeedAsync(this.Uri);
+                this.Title = feed.Title.Text;
+                this.LastUpdatedTime = feed.LastUpdatedTime;
+
+                var items = feed.Items.Select(i =>
+                    new FeedItem
+                    {
+                        Title = i.Title.Text,
+                        PublishedDate = i.PublishedDate,
+                        Summary = i.Summary.Text,
+                        Uri = i.Links.First().Uri
+                    });
+                this.FeedItems.Clear();
+                foreach (var item in items)
+                {
+                    this.FeedItems.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                // エラーが発生した場合はダミーのデータを設定する
+                Debug.WriteLine(ex);
+                this.Title = "読み込みに失敗しました";
+            }
+        }
+
     }
 }

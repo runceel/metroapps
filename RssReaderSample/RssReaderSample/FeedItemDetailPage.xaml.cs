@@ -1,11 +1,11 @@
-﻿using RssReaderSample.Data;
-
+﻿using RssReaderSample.DataModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -14,17 +14,16 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// アイテム詳細ページのアイテム テンプレートについては、http://go.microsoft.com/fwlink/?LinkId=234232 を参照してください
+// 基本ページのアイテム テンプレートについては、http://go.microsoft.com/fwlink/?LinkId=234237 を参照してください
 
 namespace RssReaderSample
 {
     /// <summary>
-    /// グループ内の単一のアイテムに関する詳細情報を表示するページです。同じグループに属する他の
-    /// アイテムにフリップするジェスチャを使用できます。
+    /// 多くのアプリケーションに共通の特性を指定する基本ページ。
     /// </summary>
-    public sealed partial class ItemDetailPage : RssReaderSample.Common.LayoutAwarePage
+    public sealed partial class FeedItemDetailPage : RssReaderSample.Common.LayoutAwarePage
     {
-        public ItemDetailPage()
+        public FeedItemDetailPage()
         {
             this.InitializeComponent();
         }
@@ -40,17 +39,8 @@ namespace RssReaderSample
         /// ディクショナリ。ページに初めてアクセスするとき、状態は null になります。</param>
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
-            // 保存されたページの状態で、表示する最初のアイテムをオーバーライドすることを許可します
-            if (pageState != null && pageState.ContainsKey("SelectedItem"))
-            {
-                navigationParameter = pageState["SelectedItem"];
-            }
-
-            // TODO: 問題のドメインでサンプル データを置き換えるのに適したデータ モデルを作成します
-            var item = SampleDataSource.GetItem((String)navigationParameter);
-            this.DefaultViewModel["Group"] = item.Group;
-            this.DefaultViewModel["Items"] = item.Group.Items;
-            this.flipView.SelectedItem = item;
+            var id = (string)navigationParameter;
+            this.DefaultViewModel["FeedItem"] = RssReaderSampleModel.GetDefault().GetFeedItemById(id);
         }
 
         /// <summary>
@@ -61,8 +51,6 @@ namespace RssReaderSample
         /// <param name="pageState">シリアル化可能な状態で作成される空のディクショナリ。</param>
         protected override void SaveState(Dictionary<String, Object> pageState)
         {
-            var selectedItem = (SampleDataItem)this.flipView.SelectedItem;
-            pageState["SelectedItem"] = selectedItem.UniqueId;
         }
     }
 }
