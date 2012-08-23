@@ -1,13 +1,16 @@
 ﻿using HelloWorldApp.Common;
-
+using HelloWorldApp.DataModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -50,6 +53,28 @@ namespace HelloWorldApp
             
             if (rootFrame == null)
             {
+                try
+                {
+                    // アプリケーションデータの保存しているファイルを取得
+                    var applicationData = await ApplicationData.Current.LocalFolder.GetFileAsync(
+                        "applicationData.xml");
+                    // 読み取り専用でファイルを開いてHelloWorldModelに読み込ませる
+                    using (var s = await applicationData.OpenStreamForReadAsync())
+                    {
+                        HelloWorldModel.LoadFromStream(s);
+                    }
+                }
+                catch (FileNotFoundException ex)
+                {
+                    // ファイルが無い(初回起動)なので何もしない
+                    Debug.WriteLine("ファイル無し" + ex);
+                }
+                catch (XmlException ex)
+                {
+                    // ファイルが破損しているので何もしない
+                    Debug.WriteLine("ファイルフォーマットが不正" + ex);
+                }
+
                 // ナビゲーション コンテキストとして動作するフレームを作成し、最初のページに移動します
                 rootFrame = new Frame();
                 //フレームを SuspensionManager キーに関連付けます                                
@@ -97,6 +122,19 @@ namespace HelloWorldApp
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
+
+            // アプリケーションデータの保存用ファイルを作成する。
+            // 既存ファイルは置き換える。
+            var applicationData = await ApplicationData.Current.LocalFolder.CreateFileAsync(
+                "applicationData.xml",
+                CreationCollisionOption.ReplaceExisting);
+
+            // 書き込み専用でファイルを開いてHelloWorldModelを保存する
+            using (var s = await applicationData.OpenStreamForWriteAsync())
+            {
+                HelloWorldModel.SaveToStream(s);
+            }
+
             deferral.Complete();
         }
     }

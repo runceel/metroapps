@@ -1,5 +1,7 @@
 ﻿using System;
 using HelloWorldApp.Common;
+using System.Runtime.Serialization;
+using System.IO;
 
 namespace HelloWorldApp.DataModel
 {
@@ -24,6 +26,26 @@ namespace HelloWorldApp.DataModel
 
             return defaultInstance;
         }
+
+        /// <summary>
+        /// デフォルトのインスタンスをStreamへ保存します。
+        /// </summary>
+        /// <param name="s">保存用のストリーム</param>
+        public static void SaveToStream(Stream s)
+        {
+            var serializer = new DataContractSerializer(typeof(HelloWorldModel));
+            serializer.WriteObject(s, GetDefault());
+        }
+
+        /// <summary>
+        /// デフォルトのインスタンスをStreamから読み込みます。
+        /// </summary>
+        /// <param name="s">読み込み用のストリーム</param>
+        public static void LoadFromStream(Stream s)
+        {
+            var serializer = new DataContractSerializer(typeof(HelloWorldModel));
+            defaultInstance = serializer.ReadObject(s) as HelloWorldModel;
+        }
         
         private string name;
         /// <summary>
@@ -39,17 +61,19 @@ namespace HelloWorldApp.DataModel
         /// <summary>
         /// メッセージを取得または設定します。
         /// </summary>
+        [IgnoreDataMember]
         public string Message
         {
             get { return this.message; }
             set { this.SetProperty(ref this.message, value); }
         }
 
-        // デフォルト値は朝
+        // 初期値は朝
         private string time = "朝";
         /// <summary>
         /// 時間帯を取得または設定します。有効な値は朝・昼・晩のいずれかです。
         /// </summary>
+        [IgnoreDataMember]
         public string Time
         {
             get { return this.time; }

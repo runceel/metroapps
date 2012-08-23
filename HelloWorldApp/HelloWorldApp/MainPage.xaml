@@ -52,14 +52,34 @@
             <Button x:Name="backButton" Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
             <TextBlock x:Name="pageTitle" Grid.Column="1" Text="{StaticResource AppName}" Style="{StaticResource PageHeaderTextStyle}"/>
         </Grid>
-        <Grid Margin="120,10,701,561" Grid.Row="1">
-        	<TextBox x:Name="textBoxName" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="420" Text="{Binding HelloWorldModel.Name, Mode=TwoWay}"/>
-        	<ComboBox x:Name="comboBoxTime" HorizontalAlignment="Left" Margin="425,0,0,0" VerticalAlignment="Top" Width="120" SelectedValuePath="Content" SelectedValue="{Binding HelloWorldModel.Time, Mode=TwoWay}">
+        <Grid x:Name="landscapeView" Grid.Row="1">
+        	<TextBox x:Name="textBoxName" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="420" Text="{Binding HelloWorldModel.Name, Mode=TwoWay}" Margin="120,13,0,0"/>
+        	<ComboBox x:Name="comboBoxTime" HorizontalAlignment="Left" Margin="545,13,0,0" VerticalAlignment="Top" Width="120" SelectedValuePath="Content" SelectedValue="{Binding HelloWorldModel.Time, Mode=TwoWay}">
         		<ComboBoxItem Content="朝" IsSelected="True"/>
         		<ComboBoxItem Content="昼"/>
         		<ComboBoxItem Content="晩"/>
         	</ComboBox>
-        	<TextBlock x:Name="textBlockMessage" HorizontalAlignment="Left" Margin="0,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Style="{StaticResource BodyTextStyle}" Text="{Binding HelloWorldModel.Message}"/>
+        	<TextBlock x:Name="textBlockMessage" HorizontalAlignment="Left" Margin="120,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Style="{StaticResource BodyTextStyle}" Text="{Binding HelloWorldModel.Message}"/>
+
+        </Grid>
+        <Grid x:Name="portraitView" Grid.Row="1" Visibility="Collapsed">
+        	<TextBox x:Name="textBoxName1" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="420" Text="{Binding HelloWorldModel.Name, Mode=TwoWay}" Margin="100,10,0,0"/>
+        	<ComboBox x:Name="comboBoxTime1" HorizontalAlignment="Left" Margin="100,47,0,0" VerticalAlignment="Top" Width="120" SelectedValuePath="Content" SelectedValue="{Binding HelloWorldModel.Time, Mode=TwoWay}">
+        		<ComboBoxItem Content="朝" IsSelected="True"/>
+        		<ComboBoxItem Content="昼"/>
+        		<ComboBoxItem Content="晩"/>
+        	</ComboBox>
+        	<TextBlock x:Name="textBlockMessage1" HorizontalAlignment="Left" Margin="100,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Style="{StaticResource BodyTextStyle}" Text="{Binding HelloWorldModel.Message}"/>
+
+        </Grid>
+        <Grid x:Name="snapView" Grid.Row="1" Visibility="Collapsed">
+        	<TextBox x:Name="textBoxName2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Text="{Binding HelloWorldModel.Name, Mode=TwoWay}" Margin="10,10,0,0"/>
+        	<ComboBox x:Name="comboBoxTime2" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Width="300" SelectedValuePath="Content" SelectedValue="{Binding HelloWorldModel.Time, Mode=TwoWay}">
+        		<ComboBoxItem Content="朝" IsSelected="True"/>
+        		<ComboBoxItem Content="昼"/>
+        		<ComboBoxItem Content="晩"/>
+        	</ComboBox>
+        	<TextBlock x:Name="textBlockMessage2" HorizontalAlignment="Left" Margin="12,86,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Style="{StaticResource BodyTextStyle}" Text="{Binding HelloWorldModel.Message}"/>
 
         </Grid>
 
@@ -76,6 +96,20 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PortraitBackButtonStyle}"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="landscapeView">
+                        	<DiscreteObjectKeyFrame KeyTime="0">
+                        		<DiscreteObjectKeyFrame.Value>
+                        			<Visibility>Collapsed</Visibility>
+                        		</DiscreteObjectKeyFrame.Value>
+                        	</DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="portraitView">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
 
@@ -87,6 +121,20 @@
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pageTitle" Storyboard.TargetProperty="Style">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedPageHeaderTextStyle}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="landscapeView">
+                        	<DiscreteObjectKeyFrame KeyTime="0">
+                        		<DiscreteObjectKeyFrame.Value>
+                        			<Visibility>Collapsed</Visibility>
+                        		</DiscreteObjectKeyFrame.Value>
+                        	</DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="snapView">
+                        	<DiscreteObjectKeyFrame KeyTime="0">
+                        		<DiscreteObjectKeyFrame.Value>
+                        			<Visibility>Visible</Visibility>
+                        		</DiscreteObjectKeyFrame.Value>
+                        	</DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

@@ -38,8 +38,26 @@ namespace HelloWorldApp
         /// ディクショナリ。ページに初めてアクセスするとき、状態は null になります。</param>
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
+            var model = HelloWorldModel.GetDefault();
+            // 中断データがある場合は読み込む
+            if (pageState != null)
+            {
+                // Timeのデータがあれば取得してHelloWorldModelに設定する
+                object time = null;
+                if (pageState.TryGetValue("Time", out time))
+                {
+                    model.Time = (string)time;
+                }
+
+                // Messageのデータがあれば取得してHelloWorldModelに設定する
+                object message = null;
+                if (pageState.TryGetValue("Message", out message))
+                {
+                    model.Message = (string)message;
+                }
+            }
             // DefaultViewModelのHelloWorldModelをキーにしてHelloWorldModelのインスタンスを設定する
-            this.DefaultViewModel["HelloWorldModel"] = HelloWorldModel.GetDefault();
+            this.DefaultViewModel["HelloWorldModel"] = model;
         }
 
         /// <summary>
@@ -50,6 +68,10 @@ namespace HelloWorldApp
         /// <param name="pageState">シリアル化可能な状態で作成される空のディクショナリ。</param>
         protected override void SaveState(Dictionary<String, Object> pageState)
         {
+            // HelloWorldModelのTimeとMessageをpageStateに保存する
+            var model = HelloWorldModel.GetDefault();
+            pageState["Time"] = model.Time;
+            pageState["Message"] = model.Message;
         }
 
         private void buttonGreet_Click(object sender, RoutedEventArgs e)
