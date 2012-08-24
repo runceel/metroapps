@@ -52,5 +52,15 @@ namespace RssReaderSample.DataModel
                 .FirstOrDefault(i => i.Id == id);
         }
 
+        /// <summary>
+        /// すべてのFeedからId指定でFeedを取得します。
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns>IDが一致したFeed。みつからない場合はnullを返します。</returns>
+        public Feed GetFeedById(string id)
+        {
+            return this.Feeds.FirstOrDefault(i => i.Id == id);
+        }
+
     }
 }
