@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Data.Xml.Dom;
+using Windows.Storage;
 using Windows.Web.Syndication;
 
 namespace RssReaderSample.DataModel
@@ -66,9 +68,18 @@ namespace RssReaderSample.DataModel
         {
             try
             {
+#if OFFLINE
+                var feed = new SyndicationFeed();
+                var file = await StorageFile.GetFileFromApplicationUriAsync(
+                    new Uri(this.Uri.ToString().EndsWith("okazuki/rss") ? 
+                        "ms-appx:///Assets/okazuki_rss.xml" :
+                        "ms-appx:///Assets/ch3cooh393_rss.xml"));
+                feed.LoadFromXml(await XmlDocument.LoadFromFileAsync(file));
+#else
                 // フィードを読み込み、FeedクラスとFeedItemを組み立てる。
                 var client = new SyndicationClient();
                 var feed = await client.RetrieveFeedAsync(this.Uri);
+#endif
                 this.Title = feed.Title.Text;
                 this.LastUpdatedTime = feed.LastUpdatedTime;
 

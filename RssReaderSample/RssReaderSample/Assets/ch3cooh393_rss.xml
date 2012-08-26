@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+
+<?xml-stylesheet href="http://d.hatena.ne.jp/ch3cooh393/rssxsl" type="text/xsl" media="screen"?>
+
+
+<rdf:RDF
+xmlns="http://purl.org/rss/1.0/"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xml:lang="ja">
+<channel rdf:about="http://d.hatena.ne.jp/ch3cooh393/rss">
+<title>酢ろぐ</title>
+<link>http://d.hatena.ne.jp/ch3cooh393/</link>
+<description>酢ろぐ</description>
+
+<dc:creator>ch3cooh393</dc:creator>
+<dc:date>2012-08-06T09:11:59+09:00</dc:date>
+<items>
+<rdf:Seq>
+<rdf:li rdf:resource="http://d.hatena.ne.jp/ch3cooh393/20120806/1344211918"/>
+<rdf:li rdf:resource="http://d.hatena.ne.jp/ch3cooh393/20120805/1344210956"/>
+<rdf:li rdf:resource="http://d.hatena.ne.jp/ch3cooh393/20120804/1344210378"/>
+<rdf:li rdf:resource="http://d.hatena.ne.jp/ch3cooh393/20120803/1343929196"/>
+<rdf:li rdf:resource="http://d.hatena.ne.jp/ch3cooh393/20120802/1343892131"/>
+</rdf:Seq>
+</items>
+</channel>
+
+
+
+<item rdf:about="http://d.hatena.ne.jp/ch3cooh393/20120806/1344211918">
+<title>[Metro Style Apps][画像処理]コントラスト調整</title>
+<link>http://d.hatena.ne.jp/ch3cooh393/20120806/1344211918</link>
+<description> 本記事では「ネガティブ(ネガポジ反転)変換 - 酢ろぐ」で紹介したIEffectインターフェースをベースにして、コントラスト調整処理を実装します。 コントラスト調整では明暗の強弱をつけます。コントラストはもっとも明るい輝度ともっとも暗い輝度との差のことで、上げすぎる</description>
+
+<content:encoded><![CDATA[
+<div class="section">
+<p><a href="http://f.hatena.ne.jp/ch3cooh393/20120806085746" class="hatena-fotolife" target="_blank"><img src="http://cdn-ak.f.st-hatena.com/images/fotolife/c/ch3cooh393/20120806/20120806085746.png" alt="f:id:ch3cooh393:20120806085746p:image" title="f:id:ch3cooh393:20120806085746p:image" class="hatena-fotolife"></a></p>
+<p>本記事では「<a href="http://d.hatena.ne.jp/ch3cooh393/20120803/1343929196" target="_blank">ネガティブ(ネガポジ反転)変換 - 酢ろぐ</a>」で紹介したIEffectインターフェースをベースにして、コントラスト調整処理を実装します。</p>
+<p>コントラスト調整では明暗の強弱をつけます。コントラストはもっとも明るい輝度ともっとも暗い輝度との差のことで、上げすぎると明暗がはっきりする代わりに色の差がなくなり、下げすぎると明暗がなくなり中間色になります。</p>
+<a name="seemore"></a>
+
+<p>以下のサンプルコードでは、高速化のためにlut(look up table)を作っています。</p>
+<pre class="syntax-highlight">
+<span class="synComment">// ConstrastEffect.cs</span>
+
+<span class="synStatement">using</span> System;
+
+<span class="synType">namespace</span> Softbuild.Media.Effects
+{
+    <span class="synType">public</span> <span class="synType">class</span> ContrastEffect : IEffect
+    {
+        <span class="synType">private</span> <span class="synType">byte</span>[] ContrastTable { get; set; }
+        <span class="synType">private</span> <span class="synType">double</span> Contrast { get; set; }
+
+        <span class="synType">public</span> ContrastEffect(<span class="synType">double</span> contrast)
+        {
+            Contrast = contrast * <span class="synConstant">2</span>;
+
+            <span class="synComment">// コントラストの変換テーブルを作成する</span>
+            ContrastTable = <span class="synStatement">new</span> <span class="synType">byte</span>[<span class="synConstant">256</span>];
+            <span class="synStatement">for</span> (<span class="synType">int</span> i = <span class="synConstant">0</span>; i &#60; <span class="synConstant">256</span>; i++)
+            {
+                <span class="synType">double</span> <span class="synStatement">value</span> = ((<span class="synType">double</span>)i - <span class="synConstant">0.5</span>) * Contrast + <span class="synConstant">0.5</span>;
+                ContrastTable[i] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, <span class="synStatement">value</span>));
+            }
+        }
+</pre>
+
+<p>コンストラクタ引数のcontrastが大きくなればなるほど差は大きくなります。実際の処理の中では、lutを元に入力画像から出力画像への変更をおこなっています。</p>
+<pre class="syntax-highlight">
+        <span class="synType">public</span> <span class="synType">byte</span>[] Effect(<span class="synType">int</span> width, <span class="synType">int</span> height, <span class="synType">byte</span>[] source)
+        {
+            <span class="synType">int</span> pixelCount = width * height;
+            var dest = <span class="synStatement">new</span> <span class="synType">byte</span>[source.Length];
+
+            <span class="synStatement">for</span> (<span class="synType">int</span> i = <span class="synConstant">0</span>; i &#60; pixelCount; i++)
+            {
+                var index = i * <span class="synConstant">4</span>;
+
+                var b = source[index + <span class="synConstant">0</span>];
+                var g = source[index + <span class="synConstant">1</span>];
+                var r = source[index + <span class="synConstant">2</span>];
+                var a = source[index + <span class="synConstant">3</span>];
+
+                <span class="synComment">// 変換テーブル</span>
+                b = ContrastTable[b];
+                g = ContrastTable[g];
+                r = ContrastTable[r];
+
+                dest[index + <span class="synConstant">0</span>] = b;
+                dest[index + <span class="synConstant">1</span>] = g;
+                dest[index + <span class="synConstant">2</span>] = r;
+                dest[index + <span class="synConstant">3</span>] = a;
+            }
+
+            <span class="synStatement">return</span> dest;
+        }
+    }
+}
+</pre>
+
+</div>
+]]></content:encoded>
+<dc:creator>ch3cooh393</dc:creator>
+<dc:date>2012-08-06T09:11:58+09:00</dc:date>
+<dc:subject>Metro Style Apps</dc:subject>
+<dc:subject>画像処理</dc:subject>
+</item>
+<item rdf:about="http://d.hatena.ne.jp/ch3cooh393/20120805/1344210956">
+<title>[Metro Style Apps][画像処理]セピア調変換</title>
+<link>http://d.hatena.ne.jp/ch3cooh393/20120805/1344210956</link>
+<description> 本記事では「ネガティブ(ネガポジ反転)変換 - 酢ろぐ」で紹介したIEffectインターフェースをベースにして、セピア調変換処理を実装します。 グレースケール変換で明暗を求められるようになったら少し変更するだけでセピア調にすることができます。Windows Mobile時代の説明</description>
+
+<content:encoded><![CDATA[
+<div class="section">
+<p><a href="http://f.hatena.ne.jp/ch3cooh393/20120806085037" class="hatena-fotolife" target="_blank"><img src="http://cdn-ak.f.st-hatena.com/images/fotolife/c/ch3cooh393/20120806/20120806085037.png" alt="f:id:ch3cooh393:20120806085037p:image" title="f:id:ch3cooh393:20120806085037p:image" class="hatena-fotolife"></a></p>
+<p>本記事では「<a href="http://d.hatena.ne.jp/ch3cooh393/20120803/1343929196" target="_blank">ネガティブ(ネガポジ反転)変換 - 酢ろぐ</a>」で紹介したIEffectインターフェースをベースにして、セピア調変換処理を実装します。</p>
+<p>グレースケール変換で明暗を求められるようになったら少し変更するだけでセピア調にすることができます。Windows Mobile時代の説明ですが「<a href="http://gihyo.jp/dev/serial/01/windows-phone/0008" target="_blank">Windows Phoneアプリケーション開発入門：第8回　Windows phoneで画像エフェクトアプリを作ろう！（1）｜gihyo.jp … 技術評論社</a>」に以前書いたことがあるのでご覧ください。</p>
+<a name="seemore"></a>
+
+<pre class="syntax-highlight">
+<span class="synComment">// SepiaEffect.cs</span>
+
+<span class="synStatement">using</span> System;
+
+<span class="synType">namespace</span> Softbuild.Media.Effects
+{
+    <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+    <span class="synComment">/// セピア調変換処理をおこなうクラス</span>
+    <span class="synComment">/// </span><span class="synIdentifier">&#60;/</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+    <span class="synType">public</span> <span class="synType">class</span> SepiaEffect : IEffect
+    {
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// セピア調変換処理をおこなう</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;/</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;width&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">ビットマップの幅</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;height&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">ビットマップの高さ</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;source&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">処理前のピクセルデータ</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span><span class="synComment">処理後のピクセルデータ</span><span class="synIdentifier">&#60;/</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span>
+        <span class="synType">public</span> <span class="synType">byte</span>[] Effect(<span class="synType">int</span> width, <span class="synType">int</span> height, <span class="synType">byte</span>[] source)
+        {
+            <span class="synType">int</span> pixelCount = width * height;
+            var dest = <span class="synStatement">new</span> <span class="synType">byte</span>[source.Length];
+
+            <span class="synStatement">for</span> (<span class="synType">int</span> i = <span class="synConstant">0</span>; i &#60; pixelCount; i++)
+            {
+                var index = i * <span class="synConstant">4</span>;
+                
+                <span class="synComment">// 処理前のピクセルの各ARGB要素を取得する</span>
+                var b = source[index + <span class="synConstant">0</span>];
+                var g = source[index + <span class="synConstant">1</span>];
+                var r = source[index + <span class="synConstant">2</span>];
+                var a = source[index + <span class="synConstant">3</span>];
+
+                <span class="synComment">// 単純平均法で輝度を求める</span>
+                var y = (<span class="synType">double</span>)(r + g + b) / <span class="synConstant">3</span>;
+
+                <span class="synComment">// 輝度に対して指定の比率を掛けてセピア調に変換する</span>
+                var db = y * <span class="synConstant">0.4</span>;
+                var dg = y * <span class="synConstant">0.7</span>;
+                var dr = y;
+
+                <span class="synComment">// 処理後のバッファへピクセル情報を保存する</span>
+                dest[index + <span class="synConstant">0</span>] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, db));
+                dest[index + <span class="synConstant">1</span>] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, dg));
+                dest[index + <span class="synConstant">2</span>] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, dr));
+                dest[index + <span class="synConstant">3</span>] = a;
+            }
+
+            <span class="synStatement">return</span> dest;
+        }
+    }
+}
+</pre>
+
+</div>
+]]></content:encoded>
+<dc:creator>ch3cooh393</dc:creator>
+<dc:date>2012-08-06T08:55:56+09:00</dc:date>
+<dc:subject>Metro Style Apps</dc:subject>
+<dc:subject>画像処理</dc:subject>
+</item>
+<item rdf:about="http://d.hatena.ne.jp/ch3cooh393/20120804/1344210378">
+<title>[Metro Style Apps][画像処理]グレースケール変換</title>
+<link>http://d.hatena.ne.jp/ch3cooh393/20120804/1344210378</link>
+<description> 本記事では「ネガティブ(ネガポジ反転)変換 - 酢ろぐ」で紹介したIEffectインターフェースをベースにして、グレースケール処理を実装します。 グレースケール画像は白から黒への256階調で表現されています。カラー画像からグレースケール画像を得るのに一番簡単なのは単純平</description>
+
+<content:encoded><![CDATA[
+<div class="section">
+<p><a href="http://f.hatena.ne.jp/ch3cooh393/20120803155153" class="hatena-fotolife" target="_blank"><img src="http://cdn-ak.f.st-hatena.com/images/fotolife/c/ch3cooh393/20120803/20120803155153.png" alt="f:id:ch3cooh393:20120803155153p:image" title="f:id:ch3cooh393:20120803155153p:image" class="hatena-fotolife"></a></p>
+<p>本記事では「<a href="http://d.hatena.ne.jp/ch3cooh393/20120803/1343929196" target="_blank">ネガティブ(ネガポジ反転)変換 - 酢ろぐ</a>」で紹介したIEffectインターフェースをベースにして、グレースケール処理を実装します。</p>
+<p>グレースケール画像は白から黒への256階調で表現されています。カラー画像からグレースケール画像を得るのに一番簡単なのは単純平均法ですね。Windows Mobile時代の説明ですが「<a href="http://gihyo.jp/dev/serial/01/windows-phone/0008" target="_blank">Windows Phoneアプリケーション開発入門：第8回　Windows phoneで画像エフェクトアプリを作ろう！（1）｜gihyo.jp … 技術評論社</a>」に以前書いたことがあるのでご覧ください。</p>
+<a name="seemore"></a>
+
+<pre class="syntax-highlight">
+<span class="synComment">// GrayscaleEffect.cs</span>
+
+<span class="synStatement">using</span> System;
+
+<span class="synType">namespace</span> Softbuild.Media.Effects
+{
+    <span class="synType">public</span> <span class="synType">class</span> GrayscaleEffect : IEffect
+    {
+        <span class="synType">public</span> <span class="synType">byte</span>[] Effect(<span class="synType">int</span> width, <span class="synType">int</span> height, <span class="synType">byte</span>[] source)
+        {
+            <span class="synType">int</span> pixelCount = width * height;
+            var dest = <span class="synStatement">new</span> <span class="synType">byte</span>[source.Length];
+
+            <span class="synStatement">for</span> (<span class="synType">int</span> i = <span class="synConstant">0</span>; i &#60; pixelCount; i++)
+            {
+                var index = i * <span class="synConstant">4</span>;
+
+                <span class="synComment">// 単純平均法で輝度を求める</span>
+                var sum = source[index + <span class="synConstant">0</span>] + source[index + <span class="synConstant">1</span>] + source[index + <span class="synConstant">2</span>];
+                var y = (<span class="synType">double</span>)sum / <span class="synConstant">3</span>;
+
+                dest[index + <span class="synConstant">0</span>] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, y));
+                dest[index + <span class="synConstant">1</span>] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, y));
+                dest[index + <span class="synConstant">2</span>] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, y));
+                dest[index + <span class="synConstant">3</span>] = source[index + <span class="synConstant">3</span>];
+            }
+
+            <span class="synStatement">return</span> dest;
+        }
+    }
+}
+</pre>
+
+</div>
+]]></content:encoded>
+<dc:creator>ch3cooh393</dc:creator>
+<dc:date>2012-08-06T08:46:18+09:00</dc:date>
+<dc:subject>Metro Style Apps</dc:subject>
+<dc:subject>画像処理</dc:subject>
+</item>
+<item rdf:about="http://d.hatena.ne.jp/ch3cooh393/20120803/1343929196">
+<title>[Metro Style Apps][画像処理]ネガティブ(ネガポジ反転)変換</title>
+<link>http://d.hatena.ne.jp/ch3cooh393/20120803/1343929196</link>
+<description> 同じC#というプログラミング言語を使用しているのですが、WinForms、Windows Phone、Metro スタイル アプリと異なるプラットフォーム毎に同じ処理を書いているので、アルゴリズムは一緒だけど実装方法が異なるというとても残念なことを繰り返しています。 何度も画像を処理</description>
+
+<content:encoded><![CDATA[
+<div class="section">
+<p><a href="http://f.hatena.ne.jp/ch3cooh393/20120803133455" class="hatena-fotolife" target="_blank"><img src="http://cdn-ak.f.st-hatena.com/images/fotolife/c/ch3cooh393/20120803/20120803133455.png" alt="f:id:ch3cooh393:20120803133455p:image" title="f:id:ch3cooh393:20120803133455p:image" class="hatena-fotolife"></a></p>
+<p>同じC#というプログラミング言語を使用しているのですが、WinForms、Windows Phone、Metro スタイル アプリと異なるプラットフォーム毎に同じ処理を書いているので、アルゴリズムは一緒だけど実装方法が異なるというとても残念なことを繰り返しています。</p>
+<p>何度も画像を処理させるのに、UIスレッドでなければ実行できないWriteableBitmapの生成をわざわざおこなうのはあまり賢い方法ではありません。ピクデルデータであるbyte配列とその幅と高さをパラメータに取るEffectメソッドをinterfaceで定義し、それぞれ専用のエフェクトクラスにて実装をおこなう形にしたいと思います。</p>
+<p>本記事では、Metro スタイル アプリでのネガティブ(白黒反転)処理を実装します。</p>
+<h4>IEffect.csでのinterfaceの定義</h4>
+<p>さて最初にIEffect.csにてinterfaceの定義をおこないます。</p>
+<pre class="syntax-highlight">
+<span class="synComment">// IEffect.cs</span>
+
+<span class="synStatement">using</span> System;
+
+<span class="synType">namespace</span> Softbuild.Media.Effects
+{
+    <span class="synType">public</span> <span class="synType">interface</span> IEffect
+    {
+        <span class="synType">byte</span>[] Effect(<span class="synType">int</span> width, <span class="synType">int</span> height, <span class="synType">byte</span>[] source);
+    }
+}
+</pre>
+
+<a name="seemore"></a>
+
+<h4>IEffect.csの実装をおこなう専用のエフェクトクラスの実装</h4>
+<p>ネガティブ処理は、ネガポジ反転処理と呼ばれたりもします。</p>
+<p>撮影した写真を画像処理によって、ネガフィルムのように色調を反転させることを「ネガティブ処理」といいます。処理としては非常にシンプルで色調を反転させるには、255からピクセルの各RGB値を引くだけです。</p>
+<pre class="syntax-highlight">
+<span class="synComment">// NegativeEffect.cs.cs</span>
+
+<span class="synStatement">using</span> System;
+
+<span class="synType">namespace</span> Softbuild.Media.Effects
+{
+    <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+    <span class="synComment">/// ネガティブ処理をおこなうクラス</span>
+    <span class="synComment">/// </span><span class="synIdentifier">&#60;/</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+    <span class="synType">public</span> <span class="synType">class</span> NegativeEffect : IEffect
+    {
+        <span class="synType">public</span> <span class="synType">byte</span>[] Effect(<span class="synType">int</span> width, <span class="synType">int</span> height, <span class="synType">byte</span>[] source)
+        {
+            <span class="synType">int</span> pixelCount = width * height;
+            var dest = <span class="synStatement">new</span> <span class="synType">byte</span>[source.Length];
+
+            <span class="synStatement">for</span> (<span class="synType">int</span> i = <span class="synConstant">0</span>; i &#60; pixelCount; i++)
+            {
+                var index = i * <span class="synConstant">4</span>;
+
+                var b = <span class="synConstant">255</span> - source[index + <span class="synConstant">0</span>];
+                var g = <span class="synConstant">255</span> - source[index + <span class="synConstant">1</span>];
+                var r = <span class="synConstant">255</span> - source[index + <span class="synConstant">2</span>];
+                var a = source[index + <span class="synConstant">3</span>];
+
+                dest[index + <span class="synConstant">0</span>] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, b));
+                dest[index + <span class="synConstant">1</span>] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, g));
+                dest[index + <span class="synConstant">2</span>] = (<span class="synType">byte</span>)Math.Min(<span class="synConstant">255</span>, Math.Max(<span class="synConstant">0</span>, r));
+                dest[index + <span class="synConstant">3</span>] = a;
+            }
+
+            <span class="synStatement">return</span> dest;
+        }
+    }
+}
+</pre>
+
+<p>「<a href="http://ch3cooh.jp/index.php/tips/metro/multimedia/image-processing/irandomaccessstream-to-writeablebitmap/" target="_blank">IRandomAccessStream型のストリームからWriteableBitmapオブジェクトへ変換する &#8211; CH3COOH(酢酸)の実験室</a>」にて紹介したWriteableBitmap用の拡張メソッド集である「WriteableBitmapExtensions」で、エフェクトを掛けた後の画像を取得できるようにしましょう。</p>
+<p>WriteableBitmapオブジェクトからピクセルデータを取得し、ピクセルデータに対して各種専用のエフェクト処理を実行します。次に加工後のピクセルデータからWriteableBitmapオブジェクトを生成するには、WriteableBitmapExtensions.FromArrayメソッドを使用します。</p>
+<pre class="syntax-highlight">
+<span class="synComment">// WriteableBitmapExtensions.cs</span>
+
+<span class="synStatement">using</span> System;
+<span class="synStatement">using</span> System.IO;
+<span class="synStatement">using</span> System.Runtime.InteropServices.WindowsRuntime;
+<span class="synStatement">using</span> System.Threading.Tasks;
+<span class="synStatement">using</span> Softbuild.Media.Effects;
+<span class="synStatement">using</span> Windows.Graphics.Imaging;
+<span class="synStatement">using</span> Windows.Storage;
+<span class="synStatement">using</span> Windows.Storage.Streams;
+<span class="synStatement">using</span> Windows.UI.Xaml.Media.Imaging;
+
+<span class="synType">namespace</span> Softbuild.Media
+{
+    <span class="synType">static</span> <span class="synType">public</span> <span class="synType">class</span> WriteableBitmapExtensions
+    {
+〜〜 FromArrayメソッド等の記載 省略 〜〜
+
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// パラメータ無しの画像処理をおこなう</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;/</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;bitmap&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">元になるWriteableBitampオブジェクト</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;effecter&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">エフェクト処理オブジェクト</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span><span class="synComment">WriteableBitmapオブジェクト</span><span class="synIdentifier">&#60;/</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span>
+        <span class="synType">private</span> <span class="synType">static</span> WriteableBitmap Effect(WriteableBitmap bmp, IEffect effecter)
+        {
+            <span class="synComment">// WriteableBitampのピクセルデータをバイト配列に変換する</span>
+            var srcPixels = bmp.PixelBuffer.ToArray();
+
+            <span class="synComment">// パラメータ無しの画像処理をおこなう</span>
+            var dstPixels = effecter.Effect(bmp.PixelWidth, bmp.PixelHeight, srcPixels);
+
+            <span class="synComment">// バイト配列からピクセルを作成する</span>
+            <span class="synStatement">return</span> WriteableBitmapExtensions.FromArray(bmp.PixelWidth, bmp.PixelHeight, dstPixels);
+        }
+</pre>
+
+<p>IEffectを実装したエフェクトクラスを実装し、元画像のWriteableBitmapオブジェクトと実装したエフェクトクラスのオブジェクトをパラメータにするだけで、以下のように非常にシンプルにエフェクト処理を実行するメソッドを作成することができました。</p>
+<pre class="syntax-highlight">
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// ネガポジ反転処理をしたWriteableBitampオブジェクトを返す</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;/</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;bitmap&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">元になるWriteableBitampオブジェクト</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span><span class="synComment">WriteableBitampオブジェクト</span><span class="synIdentifier">&#60;/</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span>
+        <span class="synType">public</span> <span class="synType">static</span> WriteableBitmap EffectNegative(<span class="synStatement">this</span> WriteableBitmap bmp)
+        {
+            <span class="synStatement">return</span> Effect(bmp, <span class="synStatement">new</span> NegativeEffect());
+        }
+    }
+}
+</pre>
+
+<h4>参考記事</h4>
+
+<ul>
+<li><a href="http://ch3cooh.jp/index.php/tips/metro/multimedia/image-processing/negative/" target="_blank">ネガティブ(白黒反転)処理をおこなう &#8211; CH3COOH(酢酸)の実験室</a></li>
+</ul>
+</div>
+]]></content:encoded>
+<dc:creator>ch3cooh393</dc:creator>
+<dc:date>2012-08-03T02:39:56+09:00</dc:date>
+<dc:subject>Metro Style Apps</dc:subject>
+<dc:subject>画像処理</dc:subject>
+</item>
+<item rdf:about="http://d.hatena.ne.jp/ch3cooh393/20120802/1343892131">
+<title>[Metro Style Apps]byte配列からWriteableBitmapオブジェクトを作成する</title>
+<link>http://d.hatena.ne.jp/ch3cooh393/20120802/1343892131</link>
+<description> この記事は、今現在にリリースされている最新の「Windows 8 Release Preview(Build 8400)」、「Visual Studio 2012 RC」を利用しております。「Windows 8 Release Preview」は開発中のものであることにご留意ください。 幅(Width)と高さ(Height)が分かっていれば、byte配列</description>
+
+<content:encoded><![CDATA[
+<div class="section">
+<p><span style="font-style:italic;color:#666666;font-size:small;" class="deco">この記事は、今現在にリリースされている最新の「Windows 8 Release Preview(Build 8400)」、「Visual Studio 2012 RC」を利用しております。「Windows 8 Release Preview」は開発中のものであることにご留意ください。</span></p>
+<p>幅(Width)と高さ(Height)が分かっていれば、byte配列型からWriteableBitmapオブジェクトを作成することができます。WriteableBitmapオブジェクトを返すFromArrayメソッドを紹介します。</p>
+<p>ついでなので「<a href="http://d.hatena.ne.jp/ch3cooh393/20120730/1343579773" target="_blank">CameraCaptureUIやFileOpenPickerで取得したストリームを簡単にWriteableBitampへ変換する拡張メソッド - 酢ろぐ</a>」で作成したWriteableBitmapExtensionsを強化してみました。</p>
+<p>ピクセルデータであるWriteableBitmapオブジェクトのPixelBufferプロパティにbyte配列型のデータを書き込んでいきます。IBuffer型であるPixelBufferプロパティに対して書き込みをおこなうには、一度System.IO.Streamオブジェクトへ変換します。</p>
+<p>このストリームはWriteableBitampのピクセルデータそのものですので、ストリーム内の位置を先頭に戻し、パラメータで渡されたbyte配列で上書きします。</p>
+<pre class="syntax-highlight">
+<span class="synType">public</span> <span class="synType">static</span> WriteableBitmap FromArray(<span class="synType">int</span> width, <span class="synType">int</span> height, <span class="synType">byte</span>[] array)
+{
+    var bitmap = <span class="synStatement">new</span> WriteableBitmap(width, height);
+    <span class="synStatement">using</span> (var pixelStream = bitmap.PixelBuffer.AsStream())
+    {
+        pixelStream.Seek(<span class="synConstant">0</span>, SeekOrigin.Begin);
+        pixelStream.Write(array, <span class="synConstant">0</span>, array.Length);
+    }
+    <span class="synStatement">return</span> bitmap;
+}
+</pre>
+
+<a name="seemore"></a>
+
+<p>このFromArrayメソッドを使って、<a href="http://d.hatena.ne.jp/ch3cooh393/20120730/1343579773" target="_blank">前回</a>書いたWriteableBitmapExtensionsクラスを変更します。</p>
+<pre class="syntax-highlight">
+<span class="synStatement">using</span> System;
+<span class="synStatement">using</span> System.IO;
+<span class="synStatement">using</span> System.Runtime.InteropServices.WindowsRuntime;
+<span class="synStatement">using</span> System.Threading.Tasks;
+<span class="synStatement">using</span> Windows.Graphics.Imaging;
+<span class="synStatement">using</span> Windows.Storage.Streams;
+<span class="synStatement">using</span> Windows.UI.Xaml.Media.Imaging;
+
+<span class="synType">namespace</span> Softbuild.Media
+{
+    <span class="synType">static</span> <span class="synType">public</span> <span class="synType">class</span> WriteableBitmapExtensions
+    {
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// バイト配列からWriteableBitmapを生成する</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;/</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;width&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">幅</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;height&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">高さ</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;array&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">ピクセルデータ</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span><span class="synComment">WriteableBitmapオブジェクト</span><span class="synIdentifier">&#60;/</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span>
+        <span class="synType">public</span> <span class="synType">static</span> WriteableBitmap FromArray(<span class="synType">int</span> width, <span class="synType">int</span> height, <span class="synType">byte</span>[] array)
+        {
+            <span class="synComment">// 出力用のWriteableBitmapオブジェクトを生成する</span>
+            var bitmap = <span class="synStatement">new</span> WriteableBitmap(width, height);
+            <span class="synComment">// WriteableBitmapへバイト配列のピクセルデータをコピーする</span>
+            <span class="synStatement">using</span> (var pixelStream = bitmap.PixelBuffer.AsStream())
+            {
+                pixelStream.Seek(<span class="synConstant">0</span>, SeekOrigin.Begin);
+                pixelStream.Write(array, <span class="synConstant">0</span>, array.Length);
+            }
+            <span class="synStatement">return</span> bitmap;
+        }
+
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// IRandomAccessStreamからWriteableBitmapを生成する</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;/</span><span class="synStatement">summary</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">param</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&#34;stream&#34;</span><span class="synIdentifier">&#62;</span><span class="synComment">ランダムアクセスストリーム</span><span class="synIdentifier">&#60;/</span><span class="synStatement">param</span><span class="synIdentifier">&#62;</span>
+        <span class="synComment">/// </span><span class="synIdentifier">&#60;</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span><span class="synComment">WriteableBitmapオブジェクト</span><span class="synIdentifier">&#60;/</span><span class="synStatement">returns</span><span class="synIdentifier">&#62;</span>
+        <span class="synType">public</span> <span class="synType">static</span> async Task&#60;WriteableBitmap&#62; FromStreamAsync(IRandomAccessStream stream)
+        {
+            <span class="synComment">// ストリームからピクセルデータを読み込む</span>
+            var decoder = await BitmapDecoder.CreateAsync(stream);
+            var transform = <span class="synStatement">new</span> BitmapTransform();
+            var pixelData = await decoder.GetPixelDataAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode,
+                transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.ColorManageToSRgb);
+            var pixels = pixelData.DetachPixelData();
+
+            <span class="synComment">// ピクセルデータからWriteableBitmapオブジェクトを生成する</span>
+            <span class="synStatement">return</span> WriteableBitmapExtensions.FromArray((<span class="synType">int</span>)decoder.OrientedPixelWidth, (<span class="synType">int</span>)decoder.OrientedPixelHeight, pixels);
+        }
+}
+</pre>
+
+<h4>参考資料</h4>
+
+<ul>
+<li><a href="http://ch3cooh.jp/index.php/tips/metro/multimedia/image-processing/irandomaccessstream-to-writeablebitmap/" target="_blank">IRandomAccessStream型のストリームからWriteableBitmapオブジェクトへ変換する &#8211; CH3COOH(酢酸)の実験室</a></li>
+</ul>
+</div>
+]]></content:encoded>
+<dc:creator>ch3cooh393</dc:creator>
+<dc:date>2012-08-02T16:22:11+09:00</dc:date>
+<dc:subject>Metro Style Apps</dc:subject>
+</item>
+</rdf:RDF>
