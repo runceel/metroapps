@@ -17,7 +17,9 @@ namespace RssReaderSample
         /// <param name="target">表示場所の起点となるAppBar上のボタン</param>
         /// <param name="flyout">表示対象のUserControl</param>
         /// <returns>表示場所</returns>
-        public static Point CalcFlyoutPosition(FrameworkElement target, UserControl flyout)
+        public static Point CalcFlyoutPosition<TTarget, TFlyoutContent>(TTarget target, TFlyoutContent flyout)
+            where TTarget : FrameworkElement
+            where TFlyoutContent : FrameworkElement
         {
             // 座標変換オブジェクトを取得
             var transform = target.TransformToVisual(null);

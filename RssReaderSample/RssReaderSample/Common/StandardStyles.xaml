@@ -400,6 +400,23 @@
         </Setter>
     </Style>
 
+    <!-- アプリケーションで使用するAppBarButtonStyle -->
+    <Style x:Key="AddAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="AddAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="追加"/>
+        <Setter Property="Content" Value="&#xE109;"/>
+    </Style>
+    <Style x:Key="DeleteAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="DeleteAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="削除"/>
+        <Setter Property="Content" Value="&#xE106;"/>
+    </Style>
+    <Style x:Key="RefreshAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="RefreshAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="再読み込み"/>
+        <Setter Property="Content" Value="&#xE117;"/>
+    </Style>
+
     <!-- 
         標準 AppBarButton スタイルは、Button と ToggleButton で使用されます。
     

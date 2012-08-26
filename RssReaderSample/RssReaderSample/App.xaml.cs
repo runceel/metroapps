@@ -1,5 +1,5 @@
 ﻿using RssReaderSample.Common;
-
+using RssReaderSample.DataModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,9 +47,10 @@ namespace RssReaderSample
 
             // ウィンドウに既にコンテンツが表示されている場合は、アプリケーションの初期化を繰り返さずに、
             // ウィンドウがアクティブであることだけを確認してください
-            
+            await RssReaderSampleModel.GetDefault().RestoreAsync();
+
             if (rootFrame == null)
-            {
+            {ｌ
                 // ナビゲーション コンテキストとして動作するフレームを作成し、最初のページに移動します
                 rootFrame = new Frame();
                 //フレームを SuspensionManager キーに関連付けます                                
@@ -97,6 +98,7 @@ namespace RssReaderSample
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
+            await RssReaderSampleModel.GetDefault().SaveAsync();
             deferral.Complete();
         }
     }

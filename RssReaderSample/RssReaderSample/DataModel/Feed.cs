@@ -62,7 +62,7 @@ namespace RssReaderSample.DataModel
         /// 指定されたUriのFeedを読み込みます。
         /// </summary>
         /// <returns></returns>
-        public async Task Load()
+        public async Task LoadAsync()
         {
             try
             {

@@ -2,14 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using Windows.Storage;
 
 namespace RssReaderSample.DataModel
 {
     public class RssReaderSampleModel : BindableBase
     {
+        private static readonly string SaveFileName = "feeds.xml";
+
         private static RssReaderSampleModel defaultInstance = new RssReaderSampleModel();
         /// <summary>
         /// デフォルトのインスタンスの取得を行います。
@@ -35,10 +42,10 @@ namespace RssReaderSample.DataModel
         /// <summary>
         /// フィードの読み込みを行います。
         /// </summary>
-        public async Task LoadAllFeeds()
+        public async Task LoadAllFeedsAsync()
         {
             // すべてのフィードの読み込みを行う
-            await Task.WhenAll(this.Feeds.Select(f => f.Load()));
+            await Task.WhenAll(this.Feeds.Select(f => f.LoadAsync()));
         }
 
         /// <summary>
@@ -61,6 +68,99 @@ namespace RssReaderSample.DataModel
         {
             return this.Feeds.FirstOrDefault(i => i.Id == id);
         }
+
+        /// <summary>
+        /// 引数で渡されたフィードを追加して読み込みを行います。
+        /// </summary>
+        /// <param name="feedUri">フィードのUri</param>
+        /// <returns></returns>
+        public async Task CreateFeedAsync(Uri feedUri)
+        {
+            var feed = new Feed { Title = "登録処理中",  Uri = feedUri };
+            this.Feeds.Add(feed);
+            await feed.LoadAsync();
+        }
+
+        /// <summary>
+        /// フィードデータの復元を行います。
+        /// </summary>
+        /// <returns></returns>
+        public async Task RestoreAsync()
+        {
+            try
+            {
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(SaveFileName);
+                using (var s = await file.OpenStreamForReadAsync())
+                {
+                    await this.RestoreAsync(s);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        /// <summary>
+        /// ストリームからフィードデータの復元を行います。
+        /// </summary>
+        /// <param name="stream"></param>
+        public async Task RestoreAsync(Stream stream)
+        {
+            try
+            {
+                var serializer = new DataContractSerializer(typeof(ObservableCollection<Feed>));
+                var ms = new MemoryStream();
+                await stream.CopyToAsync(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                var data = serializer.ReadObject(ms) as ObservableCollection<Feed>;
+                if (data == null)
+                {
+                    return;
+                }
+
+                this.Feeds.Clear();
+                foreach (var feed in data)
+                {
+                    this.Feeds.Add(feed);
+                }
+            }
+            catch (XmlException ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        /// <summary>
+        /// フィードの保存を行います。
+        /// </summary>
+        /// <returns></returns>
+        public async Task SaveAsync()
+        {
+            var file = await ApplicationData.Current.LocalFolder
+                .CreateFileAsync(SaveFileName, CreationCollisionOption.ReplaceExisting);
+            using (var s = await file.OpenStreamForWriteAsync())
+            {
+                await this.SaveAsync(s);
+            }
+        }
+
+        /// <summary>
+        /// ストリームにフィードの保存を行います。
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public async Task SaveAsync(Stream stream)
+        {
+            var serializer = new DataContractSerializer(typeof(ObservableCollection<Feed>));
+            // 一旦メモリ上に保存する
+            var ms = new MemoryStream();
+            serializer.WriteObject(ms, this.Feeds);
+            // メモリから渡されたストリームへ保存する
+            ms.Seek(0, SeekOrigin.Begin);
+            await ms.CopyToAsync(stream);
+        }
+
 
     }
 }

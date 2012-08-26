@@ -1,4 +1,5 @@
 ﻿using RssReaderSample.DataModel;
+using RssReaderSample.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +44,32 @@ namespace RssReaderSample
             var feed = RssReaderSampleModel.GetDefault().GetFeedById(id);
             this.DefaultViewModel["Group"] = feed;
             this.DefaultViewModel["Items"] = feed.FeedItems;
+        }
+
+        private void FeedItem_Click(object sender, ItemClickEventArgs e)
+        {
+            var feedItem = e.ClickedItem as FeedItem;
+            this.Frame.Navigate(typeof(FeedItemDetailPage), feedItem.Id);
+        }
+
+        private void DeleteFeedButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 現在のフィードをDataContextに設定してフライアウトを作成
+            var deleteFeedView = new DeleteFeedFlyout
+            {
+                DataContext = this.DefaultViewModel["Group"]
+            };
+            var popup = FlyoutUtils.CreateFlyout(this.BottomAppBar, (Button)sender, deleteFeedView);
+
+            // 削除完了通知がきたらPopupを閉じて前の画面に戻る
+            deleteFeedView.DeleteFeedFinished += (_, __) =>
+            {
+                popup.IsOpen = false;
+                this.Frame.GoBack();
+            };
+
+            // Popupを表示する
+            popup.IsOpen = true;
         }
     }
 }

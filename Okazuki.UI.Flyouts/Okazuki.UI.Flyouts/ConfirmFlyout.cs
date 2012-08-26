@@ -78,11 +78,6 @@
                 throw new ArgumentNullException("target");
             }
 
-            if (this.currentPopup != null)
-            {
-                throw new InvalidOperationException("already called");
-            }
-
             // 表示をホストするUserControlを作成
             var host = new FlyoutHost
             {

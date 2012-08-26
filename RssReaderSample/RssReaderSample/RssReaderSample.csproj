@@ -103,12 +103,18 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddFeedFlyout.xaml.cs">
+      <DependentUpon>AddFeedFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataModel\Feed.cs" />
     <Compile Include="DataModel\FeedItem.cs" />
     <Compile Include="DataModel\RssReaderSampleModel.cs" />
+    <Compile Include="DeleteFeedFlyout.xaml.cs">
+      <DependentUpon>DeleteFeedFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FeedDetailPage.xaml.cs">
       <DependentUpon>FeedDetailPage.xaml</DependentUpon>
     </Compile>
@@ -125,6 +131,7 @@
     <Compile Include="Common\LayoutAwarePage.cs" />
     <Compile Include="Common\RichTextColumns.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Utils\FlyoutUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -134,6 +141,14 @@
     <None Include="RssReaderSample_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="DeleteFeedFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddFeedFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Content Include="Assets\Logo.png" />
     <Content Include="Assets\SmallLogo.png" />
     <Content Include="Assets\SplashScreen.png" />

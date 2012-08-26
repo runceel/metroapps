@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfirmFlyout.cs" />
+    <Compile Include="FlyoutUtils.cs" />
     <Compile Include="Internal\ColorToBrushConverter.cs" />
     <Compile Include="Internal\FlyoutHost.xaml.cs">
       <DependentUpon>FlyoutHost.xaml</DependentUpon>
