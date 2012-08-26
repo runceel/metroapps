@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -70,6 +71,27 @@ namespace RssReaderSample
 
             // Popupを表示する
             popup.IsOpen = true;
+        }
+
+        private async void PinFeedButton_Click(object sender, RoutedEventArgs e)
+        {
+            // フィードを取得
+            var feed = this.DefaultViewModel["Group"] as Feed;
+            // すでにタイルが存在する場合は何もしない
+            if (SecondaryTile.Exists(feed.Id))
+            {
+                return;
+            }
+
+            // デフォルトのロゴでフィードのIDをタイルのIDに設定してタイルを作成
+            var tile = new SecondaryTile(
+                feed.Id,
+                feed.Title,
+                feed.Title,
+                feed.Id,
+                TileOptions.ShowNameOnLogo,
+                new Uri("ms-appx:///Assets/Logo.png"));
+            await tile.RequestCreateAsync();
         }
     }
 }

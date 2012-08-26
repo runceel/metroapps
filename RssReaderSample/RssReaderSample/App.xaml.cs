@@ -50,7 +50,7 @@ namespace RssReaderSample
             await RssReaderSampleModel.GetDefault().RestoreAsync();
 
             if (rootFrame == null)
-            {ｌ
+            {
                 // ナビゲーション コンテキストとして動作するフレームを作成し、最初のページに移動します
                 rootFrame = new Frame();
                 //フレームを SuspensionManager キーに関連付けます                                

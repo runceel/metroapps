@@ -67,6 +67,7 @@
 				</Grid.ColumnDefinitions>
 				<StackPanel Orientation="Horizontal"/>
 				<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+					<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource PinAppBarButtonStyle}" Click="PinFeedButton_Click"/>
 					<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource DeleteAppBarButtonStyle}" Click="DeleteFeedButton_Click"/>
 				</StackPanel>
 			</Grid>
