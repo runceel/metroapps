@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{153EDF46-8A30-4BBA-9292-66EA55D6C122}</ProjectGuid>
+    <ProjectGuid>{299EDF0C-FE36-40AE-9D79-F7D4A8573B15}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AccelerometerSample</RootNamespace>
@@ -106,12 +106,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\BindableBase.cs" />
-    <Compile Include="Common\BooleanNegationConverter.cs" />
-    <Compile Include="Common\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Common\LayoutAwarePage.cs" />
-    <Compile Include="Common\RichTextColumns.cs" />
-    <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -129,7 +123,6 @@
     <Content Include="Assets\SmallLogo.png" />
     <Content Include="Assets\SplashScreen.png" />
     <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Common\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

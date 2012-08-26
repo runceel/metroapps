@@ -1,45 +1,57 @@
-﻿using AccelerometerSample.Common;
+﻿using System.ComponentModel;
 
 namespace AccelerometerSample
 {
     /// <summary>
     /// マリモの情報を管理するクラス
     /// </summary>
-    public class Marimo : BindableBase
+    public class Marimo : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void SetProperty(ref double storage, double value, string info)
+        {
+            if (storage == value) return;
+            else storage = value;
+
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
+
         /// <summary>
-        /// 加速度の有無を取得または設定します。
+        /// 加速度の有無
         /// </summary>
         public bool IsAccelerometer { get; set; }
 
-        private int size = 50;
         /// <summary>
-        /// マリモのサイズを取得または設定します。
+        /// マリモのサイズ
         /// </summary>
-        public int Size
+        private double SizeValue = 100;
+        public double Size
         {
-            get { return this.size; }
-            set { this.SetProperty<int>(ref this.size, value); }
+            get { return SizeValue; }
+            set { SetProperty(ref SizeValue, value, "Size"); }
         }
 
-        private double top = 100;
         /// <summary>
-        /// マリモの画面上からの位置を取得または設定します。
+        /// マリモの位置(上からの距離)
         /// </summary>
+        private double TopValue = 100;
         public double Top
         {
-            get { return this.top; }
-            set { this.SetProperty<double>(ref this.top, value); }
+            get { return TopValue; }
+            set { SetProperty(ref TopValue, value, "Top"); }
         }
 
-        private double left = 50;
         /// <summary>
-        /// マリモの画面左からの位置を取得または設定します。
+        /// マリモの位置(左からの距離)
         /// </summary>
+        private double LeftValue = 50;
         public double Left
         {
-            get { return this.left; }
-            set { this.SetProperty<double>(ref this.left, value); }
+            get { return LeftValue; }
+            set { SetProperty(ref LeftValue, value, "Left"); }
         }
     }
 }

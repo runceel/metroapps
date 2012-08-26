@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using Windows.Devices.Sensors;
-using Windows.UI.Popups;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace AccelerometerSample
 {
-    public sealed partial class MainPage : AccelerometerSample.Common.LayoutAwarePage
+    public sealed partial class MainPage : Page
     {
         public MainPage()
         {
@@ -17,158 +12,153 @@ namespace AccelerometerSample
         }
 
         /// <summary>
-        /// ナビゲーション中に渡されたコンテンツを含むページを移入します。
-        /// 前のセッションからページを再作成するときは、保存された状態でも提供されています。
+        /// マリモの情報
         /// </summary>
-        /// <param name="navigationParameter">The parameter value passed to
-        /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested.
-        /// </param>
-        /// <param name="pageState">A dictionary of state preserved by this page during an earlier
-        /// session.  This will be null the first time a page is visited.</param>
-        protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
-        {
-        }
+        Marimo marimo = null;
 
         /// <summary>
-        /// このページの場合、アプリケーションが中断されたり、ページナビゲーションのキャッシュから
-        /// 破棄され関連付けられた状態を維持します。値は、<see cref="SuspensionManager.SessionState"/>の
-        /// シリアル化要件に準拠する必要があります。
+        /// マリモを自然落下させるためのアニメーションタイマー
         /// </summary>
-        /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
-        protected override void SaveState(Dictionary<String, Object> pageState)
+        Windows.UI.Xaml.DispatcherTimer timer = null;
+
+        /// <summary>
+        /// 加速度センサー
+        /// </summary>
+        Windows.Devices.Sensors.Accelerometer accelerometer = null;
+
+        /// <summary>
+        /// このページがフレームに表示されるときに呼び出されます。
+        /// </summary>
+        /// <param name="e">このページにどのように到達したかを説明するイベント データ。Parameter 
+        /// プロパティは、通常、ページを構成するために使用します。</param>
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-        }
+            // マリモの情報がない場合はMarimoクラスのインスタンス生成をおこなう
+            if (marimo == null)
+            {
+                marimo = new Marimo();
+            }
 
+            // marimoEllipseとマリモの情報をデータバインディングする
+            marimoEllipse.DataContext = marimo;
 
-        Marimo marimo = null;
-        Accelerometer accelerometer = null;
-        DispatcherTimer timer = null;
-
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            // マリモ情報のインスタンスを生成して画面にデータバインディングする
-            marimo = new Marimo();
-            screenGrid.DataContext = marimo;
+            // マリモを動かすためのタイマー(約30fpsで動くことを想定)
+            timer = new Windows.UI.Xaml.DispatcherTimer();
+            timer.Interval = System.TimeSpan.FromMilliseconds(33);
+            timer.Tick += timer_Tick;
+            timer.Start();
 
             // デフォルトの加速度センサーを取得する
-            accelerometer = Accelerometer.GetDefault();
-
-            // 加速度センサーデバイスがない場合はnullが返ってくる
-            if (accelerometer == null)
+            accelerometer = Windows.Devices.Sensors.Accelerometer.GetDefault();
+            // デフォルトの加速度センサーが取得できなければnullを返します
+            if (accelerometer != null)
             {
-                marimo.IsAccelerometer = false;
+                // ReadingChangedイベントハンドラを設定する
+                accelerometer.ReadingChanged += accelerometer_ReadingChanged;
 
-                // センサーがないことをユーザーへ通知
-                var dlg = new MessageDialog("加速度センサーが接続されていないか、デバイスが認識されていません。");
-                await dlg.ShowAsync();
+                // 加速度センサーが搭載されているのでtrue
+                marimo.IsAccelerometer = true;
             }
             else
             {
-                marimo.IsAccelerometer = true;
-
-                // 加速度センサーのイベントを受け取る
-                accelerometer.ReadingChanged += accelerometer_ReadingChanged;
+                // 加速度センサーが搭載されていないのでfalse
+                marimo.IsAccelerometer = false;
             }
+        }
 
-            // マリモを動かすためのタイマー(約30fpsで動くことを想定)
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(33);
-            timer.Tick += timer_Tick;
-            timer.Start();
+        // 加速度センサーの結果値
+        Windows.Devices.Sensors.AccelerometerReading accelerometerValue = null;
+
+        // 加速度センサーの値が変更される度に通知される
+        void accelerometer_ReadingChanged(Windows.Devices.Sensors.Accelerometer sender, 
+            Windows.Devices.Sensors.AccelerometerReadingChangedEventArgs args)
+        {
+            // 加速度センサーの読み取り結果を保存する
+            accelerometerValue = args.Reading;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            // 画面を抜けた後なので加速度センサーのイベントを受け取らない
-            if (accelerometer != null)
-            {
-                accelerometer.ReadingChanged -= accelerometer_ReadingChanged;
-            }
-            accelerometer = null;
-
-            // 画面を抜けた後なのでタイマーを止める
             if (timer != null)
             {
                 timer.Stop();
                 timer = null;
             }
+
+            // 画面を抜けた後なので加速度センサーのイベントを受け取らない
+            if (accelerometer != null)
+            {
+                accelerometer.ReadingChanged -= accelerometer_ReadingChanged;
+            }
         }
 
-        AccelerometerReading accValue = null;
-
-        private void accelerometer_ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
-        {
-            accValue = args.Reading;
-        }
 
         void timer_Tick(object sender, object e)
         {
-            var top = marimo.Top;
-            var left = marimo.Left;
-
-            if (accValue == null || !marimo.IsAccelerometer)
+            if (accelerometerValue == null || !marimo.IsAccelerometer)
             {
+                // ラベルの情報を更新する
+                labelError.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                labelX.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                labelY.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                labelZ.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                labelError.Text = "センサー：無し";
+
                 // 加速度の値が未取得の状態またはセンサーが存在しない場合
                 // マリモを下に移動させる
-                top++;
+                marimo.Top++;
             }
             else
             {
+                // ラベルの情報を更新する
+                labelError.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                labelX.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                labelY.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                labelZ.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
                 // 加速度センサーの値を更新する
-                labelX.Text = string.Format("x: {0:0.000}", accValue.AccelerationX);
-                labelY.Text = string.Format("y: {0:0.000}", accValue.AccelerationY);
-                labelZ.Text = string.Format("z: {0:0.000}", accValue.AccelerationZ);
+                labelX.Text = string.Format("x: {0:0.000}", accelerometerValue.AccelerationX);
+                labelY.Text = string.Format("y: {0:0.000}", accelerometerValue.AccelerationY);
+                labelZ.Text = string.Format("z: {0:0.000}", accelerometerValue.AccelerationZ);
 
                 // 傾きが大きい方向の向きにマリモを移動させる
-                if (Math.Abs(accValue.AccelerationX) < Math.Abs(accValue.AccelerationY))
+                if (Math.Abs(accelerometerValue.AccelerationX) < Math.Abs(accelerometerValue.AccelerationY))
                 {
                     // マリモを上下に移動させる
-                    if (accValue.AccelerationY < 0)
+                    if (accelerometerValue.AccelerationY < 0)
                     {
-                        top++;
+                        marimo.Top++;
                     }
                     else
                     {
-                        top--;
+                        marimo.Top--;
                     }
                 }
                 else
                 {
                     // マリモを左右に移動させる
-                    if (accValue.AccelerationX < 0)
+                    if (accelerometerValue.AccelerationX < 0)
                     {
-                        left--;
+                        marimo.Left--;
                     }
                     else
                     {
-                        left++;
+                        marimo.Left++;
                     }
                 }
             }
 
             // マリモが画面外へ出ていかないように値を補正します
-            top = Math.Min(top, screenGrid.ActualHeight - marimo.Size);
-            top = Math.Max(top, 0);
-            left = Math.Min(left, screenGrid.ActualWidth - marimo.Size);
-            left = Math.Max(left, 0);
-
-            marimo.Top = top;
-            marimo.Left = left;
+            marimo.Top = Math.Min(marimo.Top, screenGrid.ActualHeight - marimo.Size);
+            marimo.Top = Math.Max(marimo.Top, 0);
+            marimo.Left = Math.Min(marimo.Left, screenGrid.ActualWidth - marimo.Size);
+            marimo.Left = Math.Max(marimo.Left, 0);
         }
 
-        private void marimoEllipse_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private void marimoEllipse_ManipulationDelta(object sender, Windows.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs e)
         {
-            var top = marimo.Top + e.Position.Y;
-            var left = marimo.Left + e.Position.X;
-
-            // マリモが画面外へ出ていかないように値を補正します
-            top = Math.Min(top, screenGrid.ActualHeight - marimo.Size);
-            top = Math.Max(top, 0);
-            left = Math.Min(left, screenGrid.ActualWidth - marimo.Size);
-            left = Math.Max(left, 0);
-
-            marimo.Top = top;
-            marimo.Left = left;
+            marimo.Top += e.Position.Y;
+            marimo.Left += e.Position.X;
         }
     }
 }
