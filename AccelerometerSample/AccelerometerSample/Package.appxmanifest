@@ -1,39 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-
-  <Identity Name="432cc382-2b10-4384-8065-ae7677c8c4c1"
-            Publisher="CN=（酢酸）"
-            Version="1.0.0.0" />
-
+  <Identity Name="1916a0fe-40ad-4eb3-a7af-4ab5944b6bc9" Publisher="CN=ch3cooh" Version="1.0.0.0" />
   <Properties>
     <DisplayName>AccelerometerSample</DisplayName>
-    <PublisherDisplayName>（酢酸）</PublisherDisplayName>
+    <PublisherDisplayName>ch3cooh</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
-
   <Prerequisites>
-    <OSMinVersion>6.2.0</OSMinVersion>
-    <OSMaxVersionTested>6.2.0</OSMaxVersionTested>
+    <OSMinVersion>6.2.1</OSMinVersion>
+    <OSMaxVersionTested>6.2.1</OSMaxVersionTested>
   </Prerequisites>
-
   <Resources>
-    <Resource Language="x-generate"/>
+    <Resource Language="x-generate" />
   </Resources>
-
   <Applications>
-    <Application Id="App"
-        Executable="$targetnametoken$.exe"
-        EntryPoint="AccelerometerSample.App">
-        <VisualElements
-            DisplayName="AccelerometerSample"
-            Logo="Assets\Logo.png"
-            SmallLogo="Assets\SmallLogo.png"
-            Description="AccelerometerSample"
-            ForegroundText="light"
-            BackgroundColor="#464646">
-            <DefaultTile ShowName="allLogos" />
-            <SplashScreen Image="Assets\SplashScreen.png" />
-        </VisualElements>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="AccelerometerSample.App">
+      <VisualElements DisplayName="AccelerometerSample" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="AccelerometerSample" ForegroundText="light" BackgroundColor="#464646">
+        <DefaultTile ShowName="allLogos" />
+        <SplashScreen Image="Assets\SplashScreen.png" />
+        <InitialRotationPreference>
+          <Rotation Preference="landscape" />
+        </InitialRotationPreference>
+      </VisualElements>
     </Application>
   </Applications>
   <Capabilities>
