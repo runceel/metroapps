@@ -161,6 +161,5 @@ namespace RssReaderSample.DataModel
             await ms.CopyToAsync(stream);
         }
 
-
     }
 }

@@ -66,7 +66,14 @@ namespace RssReaderSample
             deleteFeedView.DeleteFeedFinished += (_, __) =>
             {
                 popup.IsOpen = false;
-                this.Frame.GoBack();
+                if (this.Frame.CanGoBack)
+                {
+                    this.Frame.GoBack();
+                }
+                else
+                {
+                    this.Frame.Navigate(typeof(MainPage));
+                }
             };
 
             // Popupを表示する

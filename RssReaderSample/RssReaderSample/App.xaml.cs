@@ -47,7 +47,10 @@ namespace RssReaderSample
 
             // ウィンドウに既にコンテンツが表示されている場合は、アプリケーションの初期化を繰り返さずに、
             // ウィンドウがアクティブであることだけを確認してください
-            await RssReaderSampleModel.GetDefault().RestoreAsync();
+            if (args.PreviousExecutionState == ApplicationExecutionState.NotRunning)
+            {
+                await RssReaderSampleModel.GetDefault().RestoreAsync();
+            }
 
             if (rootFrame == null)
             {
@@ -73,6 +76,17 @@ namespace RssReaderSample
                 // フレームを現在のウィンドウに配置します
                 Window.Current.Content = rootFrame;
             }
+
+            if (!string.IsNullOrEmpty(args.Arguments))
+            {
+                var feed = RssReaderSampleModel.GetDefault().GetFeedById(args.Arguments);
+                if (feed != null)
+                {
+                    await feed.LoadAsync();
+                    rootFrame.Navigate(typeof(FeedDetailPage), args.Arguments);
+                }
+            }
+
             if (rootFrame.Content == null)
             {
                 // ナビゲーション スタックが復元されていない場合、最初のページに移動します。

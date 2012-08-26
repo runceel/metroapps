@@ -2,6 +2,7 @@
 using RssReaderSample.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace RssReaderSample
     /// </summary>
     public sealed partial class MainPage : RssReaderSample.Common.LayoutAwarePage
     {
+        private string navigationFeedId;
+
         public MainPage()
         {
             this.InitializeComponent();
