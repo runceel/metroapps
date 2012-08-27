@@ -27,8 +27,6 @@ namespace RssReaderSample
     /// </summary>
     public sealed partial class MainPage : RssReaderSample.Common.LayoutAwarePage
     {
-        private string navigationFeedId;
-
         public MainPage()
         {
             this.InitializeComponent();

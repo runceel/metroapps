@@ -47,7 +47,7 @@ namespace RssReaderSample
 
             // ウィンドウに既にコンテンツが表示されている場合は、アプリケーションの初期化を繰り返さずに、
             // ウィンドウがアクティブであることだけを確認してください
-            if (args.PreviousExecutionState == ApplicationExecutionState.NotRunning)
+            if (args.PreviousExecutionState != ApplicationExecutionState.Running)
             {
                 await RssReaderSampleModel.GetDefault().RestoreAsync();
             }
@@ -77,11 +77,14 @@ namespace RssReaderSample
                 Window.Current.Content = rootFrame;
             }
 
+            // 引数がある場合はタイルからの実行と判断
             if (!string.IsNullOrEmpty(args.Arguments))
             {
+                // タイルに紐づくフィードの取得
                 var feed = RssReaderSampleModel.GetDefault().GetFeedById(args.Arguments);
                 if (feed != null)
                 {
+                    // フィードが取得できた場合は読み込んでフィードの詳細画面へ遷移する
                     await feed.LoadAsync();
                     rootFrame.Navigate(typeof(FeedDetailPage), args.Arguments);
                 }
