@@ -120,5 +120,54 @@ namespace RssReaderSample
             await RssReaderSampleModel.GetDefault().SaveAsync();
             deferral.Complete();
         }
+
+        /// <summary>
+        /// 検索結果を表示するためにアプリケーションがアクティブになるときに呼び出されます。
+        /// </summary>
+        /// <param name="args">アクティブ化要求に関する詳細を表示します。</param>
+        protected async override void OnSearchActivated(Windows.ApplicationModel.Activation.SearchActivatedEventArgs args)
+        {
+            // TODO: アプリケーションが既に実行されている場合は、検索時間を短縮するために OnWindowCreated で
+            // Windows.ApplicationModel.Search.SearchPane.GetForCurrentView().QuerySubmitted イベントを登録します
+            if (args.PreviousExecutionState != ApplicationExecutionState.Running)
+            {
+                await RssReaderSampleModel.GetDefault().RestoreAsync();
+            }
+
+            // ウィンドウで Frame ナビゲーションがまだ使用されていない場合は、独自の Frame を挿入します
+            var previousContent = Window.Current.Content;
+            var frame = previousContent as Frame;
+
+            // アプリケーションにトップレベルのフレームが含まれていない場合は、これが 
+            // 最初に起動される可能性があります。通常は、App.xaml.cs のこのメソッドおよび 
+            // OnLaunched で共通のメソッドを呼び出すことができます。
+            if (frame == null)
+            {
+                // ナビゲーション コンテキストとして動作するフレームを作成し、
+                // SuspensionManager キーに関連付けます
+                frame = new Frame();
+                RssReaderSample.Common.SuspensionManager.RegisterFrame(frame, "AppFrame");
+
+                if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {
+                    // 必要な場合のみ、保存されたセッション状態を復元します
+                    try
+                    {
+                        await RssReaderSample.Common.SuspensionManager.RestoreAsync();
+                    }
+                    catch (RssReaderSample.Common.SuspensionManagerException)
+                    {
+                        // 状態の復元に何か問題があります。
+                        // 状態がないものとして続行します
+                    }
+                }
+            }
+
+            frame.Navigate(typeof(FeedItemSearchResultsPage), args.QueryText);
+            Window.Current.Content = frame;
+
+            // 現在のウィンドウがアクティブであることを確認します
+            Window.Current.Activate();
+        }
     }
 }

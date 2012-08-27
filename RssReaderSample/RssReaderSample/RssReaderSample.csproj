@@ -121,6 +121,9 @@
     <Compile Include="FeedItemDetailPage.xaml.cs">
       <DependentUpon>FeedItemDetailPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FeedItemSearchResultsPage.xaml.cs">
+      <DependentUpon>FeedItemSearchResultsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -142,6 +145,10 @@
     <None Include="RssReaderSample_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="FeedItemSearchResultsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DeleteFeedFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
