@@ -112,6 +112,8 @@ namespace RssReaderSample
             {
                 // データの読み込み
                 await RssReaderSampleModel.GetDefault().LoadAllFeedsAsync();
+                // ライブタイルの更新
+                FeedTileUtils.UpdateFeedTiles(RssReaderSampleModel.GetDefault().Feeds);
             }
             finally
             {

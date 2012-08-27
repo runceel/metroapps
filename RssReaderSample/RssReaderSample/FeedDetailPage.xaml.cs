@@ -84,21 +84,8 @@ namespace RssReaderSample
         {
             // フィードを取得
             var feed = this.DefaultViewModel["Group"] as Feed;
-            // すでにタイルが存在する場合は何もしない
-            if (SecondaryTile.Exists(feed.Id))
-            {
-                return;
-            }
-
-            // デフォルトのロゴでフィードのIDをタイルのIDに設定してタイルを作成
-            var tile = new SecondaryTile(
-                feed.Id,
-                feed.Title,
-                feed.Title,
-                feed.Id,
-                TileOptions.ShowNameOnLogo,
-                new Uri("ms-appx:///Assets/Logo.png"));
-            await tile.RequestCreateAsync();
+            // タイルを作成
+            await FeedTileUtils.CreateTileIfNotExist(feed);
         }
     }
 }

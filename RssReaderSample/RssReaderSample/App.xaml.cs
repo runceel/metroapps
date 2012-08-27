@@ -1,5 +1,6 @@
 ﻿using RssReaderSample.Common;
 using RssReaderSample.DataModel;
+using RssReaderSample.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -86,6 +87,7 @@ namespace RssReaderSample
                 {
                     // フィードが取得できた場合は読み込んでフィードの詳細画面へ遷移する
                     await feed.LoadAsync();
+                    FeedTileUtils.UpdateFeedTile(feed);
                     rootFrame.Navigate(typeof(FeedDetailPage), args.Arguments);
                 }
             }

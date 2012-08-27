@@ -131,6 +131,7 @@
     <Compile Include="Common\LayoutAwarePage.cs" />
     <Compile Include="Common\RichTextColumns.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Utils\FeedTileUtils.cs" />
     <Compile Include="Utils\FlyoutUtils.cs" />
   </ItemGroup>
   <ItemGroup>
