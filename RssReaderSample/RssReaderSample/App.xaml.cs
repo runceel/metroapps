@@ -166,11 +166,48 @@ namespace RssReaderSample
                 }
             }
 
+            // 検索クエリが空の場合
+            if (string.IsNullOrWhiteSpace(args.QueryText))
+            {
+                // MainPageへの遷移が必要な場合は画面遷移を行う
+                if (CheckNavigationNeed(frame.Content))
+                {
+                    frame.Navigate(typeof(MainPage));
+                }
+
+                Window.Current.Content = frame;
+                Window.Current.Activate();
+                return;
+            }
+
             frame.Navigate(typeof(FeedItemSearchResultsPage), args.QueryText);
             Window.Current.Content = frame;
 
             // 現在のウィンドウがアクティブであることを確認します
             Window.Current.Activate();
+        }
+
+        /// <summary>
+        /// MainPageへ遷移の必要があるかどうか判断します。
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        private static bool CheckNavigationNeed(object content)
+        {
+            // 初回起動時には遷移が必要
+            if (content == null)
+            {
+                return true;
+            }
+
+            // MainPageかFeedItemSearchResultsPageの場合は遷移は不要
+            if (content.GetType() == typeof(MainPage) || content.GetType() == typeof(FeedItemSearchResultsPage))
+            {
+                return false;
+            }
+
+            // それ以外のときは遷移が必要
+            return true;
         }
 
     }
