@@ -161,6 +161,11 @@ namespace RssReaderSample.DataModel
             await ms.CopyToAsync(stream);
         }
 
+        /// <summary>
+        /// すべてのフィードのアイテムからタイトルで検索を行います。
+        /// </summary>
+        /// <param name="title">検索するタイトル</param>
+        /// <returns>検索結果</returns>
         public IEnumerable<FeedItem> SearchByTitle(string title)
         {
             return this.Feeds

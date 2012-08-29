@@ -19,6 +19,10 @@ using Windows.UI.Xaml.Navigation;
 
 namespace RssReaderSample
 {
+    // TODO: マニフェストを編集して検索を有効にします
+    //
+    // パッケージ マニフェストは自動的に更新されません。パッケージ マニフェスト ファイルを
+    // 開き、検索のアクティベーションのサポートが有効になっていることを確認してください。
     /// <summary>
     /// このページには、グローバル検索がこのアプリケーションに指定されている場合に、検索結果が表示されます。
     /// </summary>
@@ -43,28 +47,16 @@ namespace RssReaderSample
         {
             var queryText = navigationParameter as String;
 
-            // TODO: アプリケーション固有の検索ロジックです。検索プロセスでは、
-            //       結果カテゴリのリストを作成する必要があります。
-            //
-            //       filterList.Add(new Filter("<フィルター名>", <結果数>));
-            //
-            //       アクティブな状態で開始するには、3 番目の引数として true を渡すフィルターが最初
-            //       のフィルター (通常は "All") のみであることが必要です。アクティブ フィルターの
-            //       結果は以下の Filter_SelectionChanged で提供されます。
-            ExecuteQuery(queryText);
-        }
-
-        public void ExecuteQuery(string queryText)
-        {
+            // モデルを取得
             var model = RssReaderSampleModel.GetDefault();
-            var filterList = new List<Filter>
-            {
-                new Filter("All", model.SearchByTitle(queryText).ToArray(), true),
-            };
+
+            var filterList = new List<Filter>();
+            // すべての検索結果
+            filterList.Add(new Filter("All", model.SearchByTitle(queryText).ToArray(), true));
+            // フィードのタイトルごとの検索結果
             filterList.AddRange(
-                model.Feeds
-                    .Select(f => new Filter(f.Title, f.SearchByTitle(queryText).ToArray()))
-                    .Where(f => f.Count != 0));
+                model.Feeds.Select(f => 
+                    new Filter(f.Title, f.SearchByTitle(queryText).ToArray())));
 
             // ビュー モデルを介して結果を通信します
             this.DefaultViewModel["QueryText"] = '\u201c' + queryText + '\u201d';
@@ -87,8 +79,7 @@ namespace RssReaderSample
                 // いない場合に RadioButton 表現を使用して変更を反映できるようにします
                 selectedFilter.Active = true;
 
-                // TODO: this.DefaultViewModel["Results"] をバインド可能な Image、Title、および Subtitle の
-                //       バインドできる Image、Title、Subtitle、および Description プロパティを持つアイテムのコレクションに設定します
+                // 検索結果をDefaultViewModelへ設定する
                 this.DefaultViewModel["Results"] = selectedFilter.SearchResults;
 
                 // 結果が見つかったことを確認します
@@ -129,14 +120,20 @@ namespace RssReaderSample
         private sealed class Filter : RssReaderSample.Common.BindableBase
         {
             private String _name;
-            private int _count;
             private bool _active;
+            private FeedItem[] _searchResults;
 
-            public Filter(String name, ICollection<FeedItem> searchResults, bool active = false)
+            public Filter(String name, FeedItem[] searchResults, bool active = false)
             {
                 this.Name = name;
                 this.SearchResults = searchResults;
                 this.Active = active;
+            }
+
+            public FeedItem[] SearchResults
+            {
+                get { return this._searchResults; }
+                set { this.SetProperty(ref this._searchResults, value); this.OnPropertyChanged("Description"); }
             }
 
             public override String ToString()
@@ -152,8 +149,7 @@ namespace RssReaderSample
 
             public int Count
             {
-                get { return _count; }
-                private set { if (this.SetProperty(ref _count, value)) this.OnPropertyChanged("Description"); }
+                get { return this.SearchResults.Length; }
             }
 
             public bool Active
@@ -162,22 +158,9 @@ namespace RssReaderSample
                 set { this.SetProperty(ref _active, value); }
             }
 
-            private ICollection<FeedItem> searchResults;
-
-            public ICollection<FeedItem> SearchResults
-            {
-                get { return this.searchResults; }
-                set 
-                { 
-                    this.SetProperty(ref this.searchResults, value);
-                    this.Count = value.Count();
-                }
-            }
-
-
             public String Description
             {
-                get { return String.Format("{0} ({1})", _name, _count); }
+                get { return String.Format("{0} ({1})", _name, this.Count); }
             }
         }
     }

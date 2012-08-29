@@ -105,6 +105,11 @@ namespace RssReaderSample.DataModel
             }
         }
 
+        /// <summary>
+        /// タイトルの部分一致検索を行います。
+        /// </summary>
+        /// <param name="title">検索するタイトルの文字列</param>
+        /// <returns>検索結果</returns>
         public IEnumerable<FeedItem> SearchByTitle(string title)
         {
             return this.FeedItems.Where(i => i.Title.IndexOf(title) != -1);
