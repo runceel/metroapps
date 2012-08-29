@@ -51,17 +51,20 @@ namespace RssReaderSample
             //       アクティブな状態で開始するには、3 番目の引数として true を渡すフィルターが最初
             //       のフィルター (通常は "All") のみであることが必要です。アクティブ フィルターの
             //       結果は以下の Filter_SelectionChanged で提供されます。
+            ExecuteQuery(queryText);
+        }
 
+        public void ExecuteQuery(string queryText)
+        {
             var model = RssReaderSampleModel.GetDefault();
-            var filterList = new List<Filter>();
-            var allResults = model.Feeds.SelectMany(f => f.FeedItems).Where(f => f.Title.IndexOf(queryText) != -1).ToArray();
-            filterList.Add(new Filter("All", allResults.Count(), true) { SearchResults = allResults });
+            var filterList = new List<Filter>
+            {
+                new Filter("All", model.SearchByTitle(queryText).ToArray(), true),
+            };
             filterList.AddRange(
-                model.Feeds.Select(f => 
-                {
-                    var r = f.FeedItems.Where(i => i.Title.IndexOf(queryText) != -1).ToArray();
-                    return new Filter(f.Title, r.Count()) { SearchResults = r };
-                }));
+                model.Feeds
+                    .Select(f => new Filter(f.Title, f.SearchByTitle(queryText).ToArray()))
+                    .Where(f => f.Count != 0));
 
             // ビュー モデルを介して結果を通信します
             this.DefaultViewModel["QueryText"] = '\u201c' + queryText + '\u201d';
@@ -129,12 +132,10 @@ namespace RssReaderSample
             private int _count;
             private bool _active;
 
-            public ICollection<FeedItem> SearchResults { get; set; }
-
-            public Filter(String name, int count, bool active = false)
+            public Filter(String name, ICollection<FeedItem> searchResults, bool active = false)
             {
                 this.Name = name;
-                this.Count = count;
+                this.SearchResults = searchResults;
                 this.Active = active;
             }
 
@@ -152,7 +153,7 @@ namespace RssReaderSample
             public int Count
             {
                 get { return _count; }
-                set { if (this.SetProperty(ref _count, value)) this.OnPropertyChanged("Description"); }
+                private set { if (this.SetProperty(ref _count, value)) this.OnPropertyChanged("Description"); }
             }
 
             public bool Active
@@ -160,6 +161,19 @@ namespace RssReaderSample
                 get { return _active; }
                 set { this.SetProperty(ref _active, value); }
             }
+
+            private ICollection<FeedItem> searchResults;
+
+            public ICollection<FeedItem> SearchResults
+            {
+                get { return this.searchResults; }
+                set 
+                { 
+                    this.SetProperty(ref this.searchResults, value);
+                    this.Count = value.Count();
+                }
+            }
+
 
             public String Description
             {

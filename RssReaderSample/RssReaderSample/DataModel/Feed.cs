@@ -105,5 +105,9 @@ namespace RssReaderSample.DataModel
             }
         }
 
+        public IEnumerable<FeedItem> SearchByTitle(string title)
+        {
+            return this.FeedItems.Where(i => i.Title.IndexOf(title) != -1);
+        }
     }
 }

@@ -161,5 +161,10 @@ namespace RssReaderSample.DataModel
             await ms.CopyToAsync(stream);
         }
 
+        public IEnumerable<FeedItem> SearchByTitle(string title)
+        {
+            return this.Feeds
+                .SelectMany(feed => feed.SearchByTitle(title));
+        }
     }
 }

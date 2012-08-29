@@ -3,10 +3,12 @@ using RssReaderSample.DataModel;
 using RssReaderSample.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Search;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -163,10 +165,45 @@ namespace RssReaderSample
                 }
             }
 
+            if (string.IsNullOrWhiteSpace(args.QueryText))
+            {
+                frame.Navigate(typeof(MainPage));
+                Window.Current.Content = frame;
+                Window.Current.Activate();
+                return;
+            }
+
             frame.Navigate(typeof(FeedItemSearchResultsPage), args.QueryText);
             Window.Current.Content = frame;
 
             // 現在のウィンドウがアクティブであることを確認します
+            Window.Current.Activate();
+        }
+
+        protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        {
+            SearchPane.GetForCurrentView().QuerySubmitted += App_QuerySubmitted;
+        }
+
+        private void App_QuerySubmitted(SearchPane sender, SearchPaneQuerySubmittedEventArgs args)
+        {
+            // ウィンドウで Frame ナビゲーションがまだ使用されていない場合は、独自の Frame を挿入します
+            var previousContent = Window.Current.Content;
+            var frame = previousContent as Frame;
+            if (string.IsNullOrWhiteSpace(args.QueryText))
+            {
+                Window.Current.Activate();
+                return;
+            }
+
+            if (frame.Content.GetType() == typeof(FeedItemSearchResultsPage))
+            {
+                ((FeedItemSearchResultsPage)frame.Content).ExecuteQuery(args.QueryText);
+                Window.Current.Activate();
+                return;
+            }
+
+            frame.Navigate(typeof(FeedItemSearchResultsPage), args.QueryText);
             Window.Current.Activate();
         }
     }
