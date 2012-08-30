@@ -180,7 +180,19 @@ namespace RssReaderSample
                 return;
             }
 
-            frame.Navigate(typeof(FeedItemSearchResultsPage), args.QueryText);
+            var page = frame.Content as FeedItemSearchResultsPage;
+            if (page == null)
+            {
+                // 検索結果表示ページじゃない場合は検索結果表示ページに遷移
+                frame.Navigate(typeof(FeedItemSearchResultsPage), args.QueryText);
+                return;
+            }
+            else
+            {
+                // 検索結果表示ページなら検索処理を実行
+                page.ExecuteQuery(args.QueryText);
+            }
+
             Window.Current.Content = frame;
 
             // 現在のウィンドウがアクティブであることを確認します
@@ -209,6 +221,5 @@ namespace RssReaderSample
             // それ以外のときは遷移が必要
             return true;
         }
-
     }
 }

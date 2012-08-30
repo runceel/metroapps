@@ -46,22 +46,7 @@ namespace RssReaderSample
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             var queryText = navigationParameter as String;
-
-            // モデルを取得
-            var model = RssReaderSampleModel.GetDefault();
-
-            var filterList = new List<Filter>();
-            // すべての検索結果
-            filterList.Add(new Filter("All", model.SearchByTitle(queryText).ToArray(), true));
-            // フィードのタイトルごとの検索結果
-            filterList.AddRange(
-                model.Feeds.Select(f => 
-                    new Filter(f.Title, f.SearchByTitle(queryText).ToArray())));
-
-            // ビュー モデルを介して結果を通信します
-            this.DefaultViewModel["QueryText"] = '\u201c' + queryText + '\u201d';
-            this.DefaultViewModel["Filters"] = filterList;
-            this.DefaultViewModel["ShowFilters"] = filterList.Count > 1;
+            this.ExecuteQuery(queryText);
         }
 
         /// <summary>
@@ -113,6 +98,26 @@ namespace RssReaderSample
                 filtersViewSource.View.MoveCurrentTo(filter);
             }
         }
+
+        public void ExecuteQuery(string queryText)
+        {
+            // モデルを取得
+            var model = RssReaderSampleModel.GetDefault();
+
+            var filterList = new List<Filter>();
+            // すべての検索結果
+            filterList.Add(new Filter("All", model.SearchByTitle(queryText).ToArray(), true));
+            // フィードのタイトルごとの検索結果
+            filterList.AddRange(
+                model.Feeds.Select(f =>
+                    new Filter(f.Title, f.SearchByTitle(queryText).ToArray())));
+
+            // ビュー モデルを介して結果を通信します
+            this.DefaultViewModel["QueryText"] = '\u201c' + queryText + '\u201d';
+            this.DefaultViewModel["Filters"] = filterList;
+            this.DefaultViewModel["ShowFilters"] = filterList.Count > 1;
+        }
+
 
         /// <summary>
         /// 検索結果の表示に使用できるフィルターの 1 つを表すビュー モデルです。
