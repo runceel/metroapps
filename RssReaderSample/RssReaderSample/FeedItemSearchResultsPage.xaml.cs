@@ -4,9 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Search;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -32,6 +35,38 @@ namespace RssReaderSample
         public FeedItemSearchResultsPage()
         {
             this.InitializeComponent();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            // 検索クエリの変更イベントを購読
+            SearchPane.GetForCurrentView().QueryChanged += FeedItemSearchResultsPage_QueryChanged;
+        }
+
+        private DateTimeOffset queryChangedCalled;
+        private async void FeedItemSearchResultsPage_QueryChanged(SearchPane sender, SearchPaneQueryChangedEventArgs args)
+        {
+            queryChangedCalled = DateTimeOffset.Now;
+            await Task.Delay(200);
+            if (DateTimeOffset.Now - queryChangedCalled < TimeSpan.FromMilliseconds(100))
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(args.QueryText))
+            {
+                return;
+            }
+
+            this.ExecuteQuery(args.QueryText);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            // 検索クエリの変更イベントの購読を解除
+            SearchPane.GetForCurrentView().QueryChanged -= FeedItemSearchResultsPage_QueryChanged;
+            base.OnNavigatedFrom(e);
         }
 
         /// <summary>
@@ -99,6 +134,10 @@ namespace RssReaderSample
             }
         }
 
+        /// <summary>
+        /// 検索を行います。
+        /// </summary>
+        /// <param name="queryText">検索に使用するクエリ</param>
         public void ExecuteQuery(string queryText)
         {
             // モデルを取得

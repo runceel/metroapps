@@ -180,6 +180,7 @@ namespace RssReaderSample
                 return;
             }
 
+            // 現在検索結果表示ページが表示されているか確認する
             var page = frame.Content as FeedItemSearchResultsPage;
             if (page == null)
             {
