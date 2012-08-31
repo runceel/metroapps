@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Popups;
@@ -26,6 +27,32 @@ namespace RssReaderSample
         public FeedItemDetailPage()
         {
             this.InitializeComponent();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            // 共有のイベントを購読する
+            DataTransferManager.GetForCurrentView().DataRequested += FeedItemDetailPage_DataRequested;
+        }
+
+        private void FeedItemDetailPage_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            // 現在表示中のFeedItemを取得
+            var feedItem = (FeedItem)this.DefaultViewModel["FeedItem"];
+            // 転送するデータのリクエストを取得
+            var request = args.Request;
+            // 必要なデータを設定
+            request.Data.Properties.Title = feedItem.Title;
+            request.Data.Properties.Description = feedItem.Summary;
+            request.Data.SetUri(feedItem.Uri);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            // イベント購読解除
+            DataTransferManager.GetForCurrentView().DataRequested -= FeedItemDetailPage_DataRequested;
+            base.OnNavigatedFrom(e);
         }
 
         /// <summary>
