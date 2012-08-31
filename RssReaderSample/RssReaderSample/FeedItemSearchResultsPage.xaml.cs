@@ -44,21 +44,27 @@ namespace RssReaderSample
             SearchPane.GetForCurrentView().QueryChanged += FeedItemSearchResultsPage_QueryChanged;
         }
 
+        // 直前の検索クエリが変更された時間を記録
         private DateTimeOffset queryChangedCalled;
         private async void FeedItemSearchResultsPage_QueryChanged(SearchPane sender, SearchPaneQueryChangedEventArgs args)
         {
+            // 検索クエリが変更された時間を保持
             queryChangedCalled = DateTimeOffset.Now;
-            await Task.Delay(200);
-            if (DateTimeOffset.Now - queryChangedCalled < TimeSpan.FromMilliseconds(100))
+            // 少し待つ
+            await Task.Delay(250);
+            // 前回のクエリの変更から200ms以下の場合は連続して変更されているとみなして何もしない
+            if (DateTimeOffset.Now - queryChangedCalled < TimeSpan.FromMilliseconds(200))
             {
                 return;
             }
 
+            // 空の検索クエリの場合は何もしない
             if (string.IsNullOrWhiteSpace(args.QueryText))
             {
                 return;
             }
 
+            // 検索実行
             this.ExecuteQuery(args.QueryText);
         }
 
@@ -147,9 +153,11 @@ namespace RssReaderSample
             // すべての検索結果
             filterList.Add(new Filter("All", model.SearchByTitle(queryText).ToArray(), true));
             // フィードのタイトルごとの検索結果
+            // 存在しないフィードの検索結果は表示させない
             filterList.AddRange(
                 model.Feeds.Select(f =>
-                    new Filter(f.Title, f.SearchByTitle(queryText).ToArray())));
+                    new Filter(f.Title, f.SearchByTitle(queryText).ToArray()))
+                    .Where(f => f.SearchResults.Any()));
 
             // ビュー モデルを介して結果を通信します
             this.DefaultViewModel["QueryText"] = '\u201c' + queryText + '\u201d';

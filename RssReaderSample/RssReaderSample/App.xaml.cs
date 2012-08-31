@@ -186,7 +186,6 @@ namespace RssReaderSample
             {
                 // 検索結果表示ページじゃない場合は検索結果表示ページに遷移
                 frame.Navigate(typeof(FeedItemSearchResultsPage), args.QueryText);
-                return;
             }
             else
             {
