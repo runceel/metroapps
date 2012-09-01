@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:RssReaderSample"
     xmlns:common="using:RssReaderSample.Common"
+	xmlns:datamodel="using:RssReaderSample.DataModel"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -15,8 +16,35 @@
         <CollectionViewSource x:Name="resultsViewSource" Source="{Binding Results}"/>
         <CollectionViewSource x:Name="filtersViewSource" Source="{Binding Filters}"/>
         <common:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <!-- TODO: 次の文字列を更新してアプリケーションの名前にします -->
-        <x:String x:Key="AppName">アプリケーション名</x:String>
+        <DataTemplate x:Key="TypicalFeedItemTemplate">
+        	<Grid Width="294" Margin="6" d:DataContext="{d:DesignInstance Type=datamodel:FeedItem, IsDesignTimeCreatable=True}">
+        		<Grid.ColumnDefinitions>
+        			<ColumnDefinition Width="Auto"/>
+        			<ColumnDefinition Width="*"/>
+        		</Grid.ColumnDefinitions>
+        		<Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,0,0,10" Width="40" Height="40">
+        		</Border>
+        		<StackPanel Grid.Column="1" Margin="10,-10,0,0">
+        			<TextBlock Text="{Binding Title}" Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap"/>
+        			<TextBlock Text="{Binding Summary}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+        			<TextBlock Text="{Binding PublishedDate}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+        		</StackPanel>
+        	</Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="SnappedFeedItemTemplate">
+            <Grid Margin="6" d:DataContext="{d:DesignInstance Type=datamodel:FeedItem, IsDesignTimeCreatable=True}">
+        		<Grid.ColumnDefinitions>
+        			<ColumnDefinition Width="Auto"/>
+        			<ColumnDefinition Width="*"/>
+        		</Grid.ColumnDefinitions>
+        		<Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,0,0,10" Width="40" Height="40"/>
+        		<StackPanel Grid.Column="1" Margin="10,-10,0,0">
+        			<TextBlock Text="{Binding Title}" Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap"/>
+        			<TextBlock Text="{Binding Summary}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+        			<TextBlock Text="{Binding PublishedDate}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+        		</StackPanel>
+        	</Grid>
+        </DataTemplate>
     </Page.Resources>
 
     <!--
@@ -78,7 +106,7 @@
                     IsSwipeEnabled="false"
                     IsItemClickEnabled="True"
                     ItemsSource="{Binding Source={StaticResource resultsViewSource}}"
-                    ItemTemplate="{StaticResource StandardSmallIcon300x70ItemTemplate}">
+                    ItemTemplate="{StaticResource TypicalFeedItemTemplate}" ItemClick="FeedItem_Click">
                     
                     <GridView.ItemContainerStyle>
                         <Style TargetType="Control">
@@ -118,7 +146,7 @@
                     IsSwipeEnabled="false"
                     IsItemClickEnabled="True"
                     ItemsSource="{Binding Source={StaticResource resultsViewSource}}"
-                    ItemTemplate="{StaticResource StandardSmallIcon70ItemTemplate}">
+                    ItemTemplate="{StaticResource SnappedFeedItemTemplate}" ItemClick="FeedItem_Click">
 
                     <ListView.ItemContainerStyle>
                         <Style TargetType="Control">

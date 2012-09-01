@@ -31,6 +31,7 @@ namespace RssReaderSample
     /// </summary>
     public sealed partial class FeedItemSearchResultsPage : RssReaderSample.Common.LayoutAwarePage
     {
+        private string currentQuery;
 
         public FeedItemSearchResultsPage()
         {
@@ -87,7 +88,21 @@ namespace RssReaderSample
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             var queryText = navigationParameter as String;
+
+            // pageStateにクエリがある場合は、ナビゲーションパラメータよりも優先して使用する
+            object query;
+            if (pageState != null && pageState.TryGetValue("currentQuery", out query))
+            {
+                queryText = query as string ?? queryText;
+            }
+
             this.ExecuteQuery(queryText);
+        }
+
+        protected override void SaveState(Dictionary<string, object> pageState)
+        {
+            // 現在の検索クエリを一時保存
+            pageState["currentQuery"] = this.currentQuery;
         }
 
         /// <summary>
@@ -163,8 +178,17 @@ namespace RssReaderSample
             this.DefaultViewModel["QueryText"] = '\u201c' + queryText + '\u201d';
             this.DefaultViewModel["Filters"] = filterList;
             this.DefaultViewModel["ShowFilters"] = filterList.Count > 1;
+
+            // 検索クエリの保存
+            this.currentQuery = queryText;
         }
 
+        private void FeedItem_Click(object sender, ItemClickEventArgs e)
+        {
+            // クリックされたFeedItemを使ってFeedItemDetailPageへ遷移
+            var feedItem = e.ClickedItem as FeedItem;
+            this.Frame.Navigate(typeof(FeedItemDetailPage), feedItem.Id);
+        }
 
         /// <summary>
         /// 検索結果の表示に使用できるフィルターの 1 つを表すビュー モデルです。
@@ -215,5 +239,6 @@ namespace RssReaderSample
                 get { return String.Format("{0} ({1})", _name, this.Count); }
             }
         }
+
     }
 }
