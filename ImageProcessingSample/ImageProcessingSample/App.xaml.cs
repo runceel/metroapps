@@ -14,18 +14,18 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
+// 空のアプリケーション テンプレートについては、http://go.microsoft.com/fwlink/?LinkId=234227 を参照してください
 
 namespace ImageProcessingSample
 {
     /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
+    /// 既定の Application クラスを補完するアプリケーション固有の動作を提供します。
     /// </summary>
     sealed partial class App : Application
     {
         /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
+        /// 単一アプリケーション オブジェクトを初期化します。これは、実行される作成したコードの
+        /// 最初の行であり、main() または WinMain() と論理的に等価です。
         /// </summary>
         public App()
         {
@@ -34,49 +34,56 @@ namespace ImageProcessingSample
         }
 
         /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used when the application is launched to open a specific file, to display
-        /// search results, and so forth.
+        /// アプリケーションがエンド ユーザーによって正常に起動されたときに呼び出されます。他のエントリ ポイントは、
+        /// アプリケーションが特定のファイルを開くために呼び出されたときに
+        /// 検索結果やその他の情報を表示するために使用されます。
         /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
+        /// <param name="args">起動要求とプロセスの詳細を表示します。</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            // Do not repeat app initialization when already running, just ensure that
-            // the window is active
-            if (args.PreviousExecutionState == ApplicationExecutionState.Running)
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            // ウィンドウに既にコンテンツが表示されている場合は、アプリケーションの初期化を繰り返さずに、
+            // ウィンドウがアクティブであることだけを確認してください
+            if (rootFrame == null)
             {
-                Window.Current.Activate();
-                return;
+                // ナビゲーション コンテキストとして動作するフレームを作成し、最初のページに移動します
+                rootFrame = new Frame();
+
+                if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {
+                    //TODO: 以前中断したアプリケーションから状態を読み込みます。
+                }
+
+                // フレームを現在のウィンドウに配置します
+                Window.Current.Content = rootFrame;
             }
 
-            if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            if (rootFrame.Content == null)
             {
-                //TODO: Load state from previously suspended application
+                // ナビゲーション スタックが復元されていない場合、最初のページに移動します。
+                // このとき、必要な情報をナビゲーション パラメーターとして渡して、新しいページを
+                // 構成します
+                if (!rootFrame.Navigate(typeof(MainPage), args.Arguments))
+                {
+                    throw new Exception("Failed to create initial page");
+                }
             }
-
-            // Create a Frame to act navigation context and navigate to the first page
-            var rootFrame = new Frame();
-            if (!rootFrame.Navigate(typeof(MainPage)))
-            {
-                throw new Exception("Failed to create initial page");
-            }
-
-            // Place the frame in the current Window and ensure that it is active
-            Window.Current.Content = rootFrame;
+            // 現在のウィンドウがアクティブであることを確認します
             Window.Current.Activate();
         }
 
         /// <summary>
-        /// Invoked when application execution is being suspended.  Application state is saved
-        /// without knowing whether the application will be terminated or resumed with the contents
-        /// of memory still intact.
+        /// アプリケーションの実行が中断されたときに呼び出されます。アプリケーションの状態は、
+        /// アプリケーションが終了されるのか、メモリの内容がそのままで再開されるのか
+        /// わからない状態で保存されます。
         /// </summary>
-        /// <param name="sender">The source of the suspend request.</param>
-        /// <param name="e">Details about the suspend request.</param>
+        /// <param name="sender">中断要求の送信元。</param>
+        /// <param name="e">中断要求の詳細。</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+            //TODO: アプリケーションの状態を保存してバックグラウンドの動作があれば停止します
             deferral.Complete();
         }
     }

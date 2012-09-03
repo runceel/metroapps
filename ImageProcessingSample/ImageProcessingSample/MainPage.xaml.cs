@@ -12,12 +12,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+// 空白ページのアイテム テンプレートについては、http://go.microsoft.com/fwlink/?LinkId=234238 を参照してください
 
 namespace ImageProcessingSample
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// それ自体で使用できる空白ページまたはフレーム内に移動できる空白ページ。
     /// </summary>
     public sealed partial class MainPage : Page
     {
@@ -27,12 +27,24 @@ namespace ImageProcessingSample
         }
 
         /// <summary>
-        /// Invoked when this page is about to be displayed in a Frame.
+        /// このページがフレームに表示されるときに呼び出されます。
         /// </summary>
-        /// <param name="e">Event data that describes how this page was reached.  The Parameter
-        /// property is typically used to configure the page.</param>
+        /// <param name="e">このページにどのように到達したかを説明するイベント データ。Parameter 
+        /// プロパティは、通常、ページを構成するために使用します。</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+        }
+
+        // アプリバーの表示に連動して、エフェクト選択バーを表示させる
+        private void AppBar_Opened_1(object sender, object e)
+        {
+            OpenEffectBarStoryboard.Begin();
+        }
+
+        // アプリバーの非表示に連動して、エフェクト選択バーを非表示にする
+        private void AppBar_Closed_1(object sender, object e)
+        {
+            CloseEffectBarStoryboard.Begin();
         }
     }
 }
