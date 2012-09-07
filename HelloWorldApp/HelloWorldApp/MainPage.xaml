@@ -26,7 +26,7 @@
 				</Grid.ColumnDefinitions>
 				<StackPanel Orientation="Horizontal"/>
 				<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-					<Button Height="100" Width="100" Style="{StaticResource GreetAppBarButtonStyle}" Click="buttonGreet_Click"/>
+					<Button Height="100" Width="100" Style="{StaticResource GreetAppBarButtonStyle}" Click="buttonGreet_Click" ToolTipService.ToolTip="挨拶をします"/>
 				</StackPanel>
 			</Grid>
 		</AppBar>
