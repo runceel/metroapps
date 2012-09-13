@@ -38,8 +38,8 @@
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 				<StackPanel Orientation="Horizontal">
-					<Button x:Name="buttonPhoto" Style="{StaticResource PhotoAppBarButtonStyle}" />
-					<Button x:Name="buttonAdd" Style="{StaticResource AddAppBarButtonStyle}"/>
+					<Button x:Name="buttonPhoto" Style="{StaticResource PhotoAppBarButtonStyle}" Click="buttonPhoto_Click" />
+					<Button x:Name="buttonAdd" Style="{StaticResource AddAppBarButtonStyle}" Click="buttonAdd_Click"/>
 				</StackPanel>
 				<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal"/>
 			</Grid>
@@ -53,8 +53,8 @@
                 <CompositeTransform TranslateY="-75" ScaleY="0"/>
             </Grid.RenderTransform>
             <StackPanel Orientation="Horizontal">
-    			<Button x:Name="buttonNormal" Content="Normal" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24"/>
-                <Button x:Name="buttonMonochrome" Content="Monochrome" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24"/>
+    			<Button x:Name="buttonNormal" Content="Normal" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24" Click="buttonNormal_Click"/>
+                <Button x:Name="buttonMonochrome" Content="Monochrome" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24" Click="buttonMonochrome_Click"/>
                 <Button x:Name="buttonSepia" Content="Sepia" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24"/>
                 <Button x:Name="buttonBakumatsu" Content="Bakumatsu" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24"/>
                 <Button x:Name="buttonToycamera" Content="Toycamera" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24"/>

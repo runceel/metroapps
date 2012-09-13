@@ -1,42 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-
-  <Identity Name="2179aa86-7928-41cd-80ed-dfee9c37f304"
-            Publisher="CN=ch3cooh"
-            Version="1.0.0.0" />
-
+  <Identity Name="2179aa86-7928-41cd-80ed-dfee9c37f304" Publisher="CN=ch3cooh" Version="1.0.0.0" />
   <Properties>
     <DisplayName>ImageProcessingSample</DisplayName>
     <PublisherDisplayName>ch3cooh</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
-
   <Prerequisites>
     <OSMinVersion>6.2.1</OSMinVersion>
     <OSMaxVersionTested>6.2.1</OSMaxVersionTested>
   </Prerequisites>
-
   <Resources>
-    <Resource Language="x-generate"/>
+    <Resource Language="x-generate" />
   </Resources>
-
   <Applications>
-    <Application Id="App"
-        Executable="$targetnametoken$.exe"
-        EntryPoint="ImageProcessingSample.App">
-        <VisualElements
-            DisplayName="ImageProcessingSample"
-            Logo="Assets\Logo.png"
-            SmallLogo="Assets\SmallLogo.png"
-            Description="ImageProcessingSample"
-            ForegroundText="light"
-            BackgroundColor="#464646">
-            <DefaultTile ShowName="allLogos" />
-            <SplashScreen Image="Assets\SplashScreen.png" />
-        </VisualElements>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="ImageProcessingSample.App">
+      <VisualElements DisplayName="ImageProcessingSample" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="ImageProcessingSample" ForegroundText="light" BackgroundColor="#464646">
+        <DefaultTile ShowName="allLogos" />
+        <SplashScreen Image="Assets\SplashScreen.png" />
+      </VisualElements>
     </Application>
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
+    <DeviceCapability Name="webcam" />
+    <DeviceCapability Name="microphone" />
   </Capabilities>
 </Package>
