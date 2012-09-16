@@ -41,27 +41,37 @@ namespace ImageProcessingSample
         // アプリバーの表示に連動して、エフェクト選択バーを表示させる
         private void AppBar_Opened_1(object sender, object e)
         {
-            OpenEffectBarStoryboard.Begin();
+            //OpenEffectBarStoryboard.Begin();
         }
 
         // アプリバーの非表示に連動して、エフェクト選択バーを非表示にする
         private void AppBar_Closed_1(object sender, object e)
         {
-            CloseEffectBarStoryboard.Begin();
+            //CloseEffectBarStoryboard.Begin();
         }
 
         private async Task<WriteableBitmap> CreateBitmapAsync(StorageFile file)
         {
-            // ファイルストリームを開きます
-            var stream = await file.OpenReadAsync();
+            // デコード後の画像のサイズを格納する
+            int width, height;
+            // デコード後のピクセルデータを格納する
+            var bytes = default(byte[]);
 
-            // 非同期で新しいデコーダーを生成し、ストリームからピクセルデータをデコードする
-            var decoder = await BitmapDecoder.CreateAsync(stream);
-            var pixelData = await decoder.GetPixelDataAsync();
-            var bytes = pixelData.DetachPixelData();
+            // ファイルストリームを開きます
+            using (var stream = await file.OpenReadAsync())
+            {
+                // 非同期で新しいデコーダーを生成する
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                // 幅と高さを取得する
+                width = (int)decoder.PixelWidth;
+                height = (int)decoder.PixelHeight;
+                // デコード後のピクセルデータを取得する
+                var pixelData = await decoder.GetPixelDataAsync();
+                bytes = pixelData.DetachPixelData();
+            }
 
             // WriteableBitmapオブジェクトを生成し、デコード済みのピクセルデータを上書きする
-            var bitmap = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
+            var bitmap = new WriteableBitmap(width, height);
             using (var pixelStream = bitmap.PixelBuffer.AsStream())
             {
                 await pixelStream.WriteAsync(bytes, 0, bytes.Length);
@@ -174,6 +184,25 @@ namespace ImageProcessingSample
 
             // 加工後の画像をImageコントロールへ表示する
             effectedImage.Source = dstBitmap;
+        }
+
+        // エフェクト選択バーが表示されている状態であるか？のフラグ
+        bool isOpenEditBar = false;
+
+        private void buttonEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if (isOpenEditBar)
+            {
+                // エフェクト選択バーを非表示にする
+                CloseEffectBarStoryboard.Begin();
+                isOpenEditBar = false;
+            }
+            else
+            {
+                // エフェクト選択バーを表示する
+                OpenEffectBarStoryboard.Begin();
+                isOpenEditBar = true;
+            }
         }
     }
 }
