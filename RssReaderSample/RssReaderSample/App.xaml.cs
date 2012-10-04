@@ -92,6 +92,8 @@ namespace RssReaderSample
                     await feed.LoadAsync();
                     FeedTileUtils.UpdateFeedTile(feed);
                     rootFrame.Navigate(typeof(FeedDetailPage), args.Arguments);
+                    Window.Current.Activate();
+                    return;
                 }
             }
 
