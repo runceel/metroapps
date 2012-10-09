@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace ImageProcessingSample.Media.Effects
@@ -74,6 +76,101 @@ namespace ImageProcessingSample.Media.Effects
         public static WriteableBitmap EffectGrayscale(this WriteableBitmap bmp)
         {
             return bmp.Effect(new GrayscaleEffect());
+        }
+
+        public static WriteableBitmap EffectSepia(this WriteableBitmap bmp)
+        {
+            return bmp.Effect(new SepiaEffect());
+        }
+
+        public static WriteableBitmap EffectContrast(this WriteableBitmap bmp, double contrast)
+        {
+            return bmp.Effect(new ContrastEffect(contrast));
+        }
+
+        public static WriteableBitmap EffectSaturatio(this WriteableBitmap bmp, double saturatio)
+        {
+            return bmp.Effect(new SaturationEffect(saturatio));
+        }
+
+        public static WriteableBitmap EffectToycamera(this WriteableBitmap bmp, WriteableBitmap maskBmp)
+        {
+            // マスク画像を元画像のサイズにリサイズする
+            var resizedBmp = maskBmp.Resize(bmp.PixelWidth, bmp.PixelHeight);
+
+            // コントラスト調整、彩度調整、口径食風処理のエフェクトオブジェクトを作成
+            var effectors = new List<IEffect>();
+            effectors.Add(new ContrastEffect(0.8));
+            effectors.Add(new SaturationEffect(0.7));
+            effectors.Add(new VignettingEffect(resizedBmp, 0.8));
+
+            // 複数のエフェクト処理を実行する
+            return Effect(bmp, effectors);
+        }
+
+        public static WriteableBitmap EffectVignetting(this WriteableBitmap bmp, WriteableBitmap maskBmp, double vignetting)
+        {
+            // マスク画像を元画像のサイズにリサイズする
+            var resizedBmp = maskBmp.Resize(bmp.PixelWidth, bmp.PixelHeight);
+
+            return Effect(bmp, new VignettingEffect(resizedBmp, vignetting));
+        }
+
+        public static WriteableBitmap EffectBakumatsu(this WriteableBitmap bmp, WriteableBitmap maskBmp)
+        {
+            // マスク画像を元画像のサイズにリサイズする
+            var resizedBmp = maskBmp.Resize(bmp.PixelWidth, bmp.PixelHeight);
+
+            return Effect(bmp, new BakumatsuEffect(resizedBmp));
+        }
+
+        /// <summary>
+        /// リサイズする
+        /// </summary>
+        /// <param name="bmp">WriteableBitmapオブジェクト</param>
+        /// <param name="destWidth">変形後の幅</param>
+        /// <param name="destHeight">変形後の高さ</param>
+        /// <returns>リサイズ後のWriteableBitmapオブジェクト</returns>
+        public static WriteableBitmap Resize(this WriteableBitmap bmp, int destWidth, int destHeight)
+        {
+            // 加工前のWriteableBitampオブジェクトからピクセルデータ等を取得する
+            var srcWidth = bmp.PixelWidth;
+            var srcHeight = bmp.PixelHeight;
+            if ((srcWidth == destWidth) && (srcHeight == destHeight))
+            {
+                // リサイズする必要がないのでそのままビットマップを返す
+                return bmp;
+            }
+
+            var srcPixels = bmp.PixelBuffer.ToArray();
+            int pixelCount = destWidth * destHeight;
+            var destPixels = new byte[4 * pixelCount];
+
+            var xs = (float)srcWidth / destWidth;
+            var ys = (float)srcHeight / destHeight;
+
+            for (var y = 0; y < destHeight; y++)
+            {
+                for (var x = 0; x < destWidth; x++)
+                {
+                    var index = (y * destWidth + x) * 4;
+
+                    var sx = x * xs;
+                    var sy = y * ys;
+                    var x0 = (int)sx;
+                    var y0 = (int)sy;
+
+                    var srcIndex = (y0 * srcWidth + x0) * 4;
+
+                    destPixels[index + 0] = srcPixels[srcIndex + 0];
+                    destPixels[index + 1] = srcPixels[srcIndex + 1];
+                    destPixels[index + 2] = srcPixels[srcIndex + 2];
+                    destPixels[index + 3] = srcPixels[srcIndex + 3];
+                }
+            }
+
+            // ピクセルデータからWriteableBitmapオブジェクトを生成する
+            return WriteableBitmapExtensions.FromArray(destWidth, destHeight, destPixels);
         }
     }
 }

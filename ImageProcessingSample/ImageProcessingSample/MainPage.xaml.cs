@@ -1,21 +1,17 @@
-﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
+﻿using ImageProcessingSample.Media.Effects;
+using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
-using Windows.Media.Capture; 
-using Windows.Storage.Streams;
-using System;
-using Windows.UI.Popups;
+using Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-
-using ImageProcessingSample.Media.Effects;
-
-
-// 空白ページのアイテム テンプレートについては、http://go.microsoft.com/fwlink/?LinkId=234238 を参照してください
+using Windows.UI.Popups;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 
 namespace ImageProcessingSample
 {
@@ -36,18 +32,6 @@ namespace ImageProcessingSample
         /// プロパティは、通常、ページを構成するために使用します。</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-        }
-
-        // アプリバーの表示に連動して、エフェクト選択バーを表示させる
-        private void AppBar_Opened_1(object sender, object e)
-        {
-            //OpenEffectBarStoryboard.Begin();
-        }
-
-        // アプリバーの非表示に連動して、エフェクト選択バーを非表示にする
-        private void AppBar_Closed_1(object sender, object e)
-        {
-            //CloseEffectBarStoryboard.Begin();
         }
 
         private async Task<WriteableBitmap> CreateBitmapAsync(StorageFile file)
@@ -134,7 +118,7 @@ namespace ImageProcessingSample
             // ファイルピッカーの表示モードをサムネイル表示モードに設定する
             picker.ViewMode = PickerViewMode.Thumbnail;
 
-            // ファイルピッカーで表示する拡張子を表示する
+            // ファイルピッカーで表示する拡張子を追加する
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
@@ -159,33 +143,6 @@ namespace ImageProcessingSample
             }
         }
 
-        private void buttonNormal_Click(object sender, RoutedEventArgs e)
-        {
-            // まだ元画像が読み込みされていなければ何もせずに終了する
-            if (srcBitmap == null)
-            {
-                return;
-            }
-
-            // Imageコントロールへ表示する
-            effectedImage.Source = srcBitmap;
-        }
-
-        private void buttonMonochrome_Click(object sender, RoutedEventArgs e)
-        {
-            // まだ元画像が読み込みされていなければ何もせずに終了する
-            if (srcBitmap == null)
-            {
-                return;
-            }
-
-            // 画像をグレイスケール化する
-            dstBitmap = srcBitmap.EffectGrayscale();
-
-            // 加工後の画像をImageコントロールへ表示する
-            effectedImage.Source = dstBitmap;
-        }
-
         // エフェクト選択バーが表示されている状態であるか？のフラグ
         bool isOpenEditBar = false;
 
@@ -202,6 +159,121 @@ namespace ImageProcessingSample
                 // エフェクト選択バーを表示する
                 OpenEffectBarStoryboard.Begin();
                 isOpenEditBar = true;
+            }
+        }
+
+        // 処理前の画像をImageコントロールに表示する
+        private void buttonNormal_Click(object sender, RoutedEventArgs e)
+        {
+            // まだ元画像が読み込みされていなければ何もせずに終了する
+            if (srcBitmap == null)
+            {
+                return;
+            }
+
+            // Imageコントロールへ表示する
+            effectedImage.Source = srcBitmap;
+        }
+
+        // グレースケール処理した画像をImageコントロールに表示する
+        private void buttonMonochrome_Click(object sender, RoutedEventArgs e)
+        {
+            if (srcBitmap == null) return;
+
+            // 画像をグレースケール化する
+            dstBitmap = srcBitmap.EffectGrayscale();
+
+            // 加工後の画像をImageコントロールへ表示する
+            effectedImage.Source = dstBitmap;
+        }
+
+        // セピア調処理した画像をImageコントロールに表示する
+        private void buttonSepia_Click(object sender, RoutedEventArgs e)
+        {
+            if (srcBitmap == null) return;
+
+            // 画像をセピア調化処理する
+            dstBitmap = srcBitmap.EffectSepia();
+
+            // 加工後の画像をImageコントロールへ表示する
+            effectedImage.Source = dstBitmap;
+        }
+
+        // 幕末写真風処理した画像をImageコントロールに表示する
+        private async void buttonBakumatsu_Click(object sender, RoutedEventArgs e)
+        {
+            if (srcBitmap == null) return;
+
+            // 古紙画像をアプリ内のリソースから読み出す
+            var imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/bakumatsu.jpg"));
+            var bakumatsuBmp = await CreateBitmapAsync(imageFile);
+
+            // 画像を幕末写真風に処理する
+            dstBitmap = srcBitmap.EffectBakumatsu(bakumatsuBmp);
+
+            // 加工後の画像をImageコントロールへ表示する
+            effectedImage.Source = dstBitmap;
+        }
+
+        // トイカメラ写真風処理した画像をImageコントロールに表示する
+        private async void buttonToycamera_Click(object sender, RoutedEventArgs e)
+        {
+            if (srcBitmap == null) return;
+
+            // 口径食を表現した画像をアプリ内のリソースから読み出す
+            var imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/vignetting_gradation.png"));
+            var vignettingBmp = await CreateBitmapAsync(imageFile);
+
+            // 画像をトイカメラ風に処理する
+            dstBitmap = srcBitmap.EffectToycamera(vignettingBmp);
+
+            // 加工後の画像をImageコントロールへ表示する
+            effectedImage.Source = dstBitmap;
+        }
+
+        private async void buttonSave_Click(object sender, RoutedEventArgs e)
+        {
+            // まだ画像がエフェクト処理されていなければメソッドを終了する
+            if (dstBitmap == null)
+            {
+                return;
+            }
+
+            // ファイル保存用ダイアログのインスタンスを生成する
+            var picker = new FileSavePicker();
+
+            // 選択可能な拡張子とデフォルトで選択されている拡張子を指定する
+            picker.FileTypeChoices.Add("JPEGファイル", new List<string> { ".jpg", ".jpeg" });
+            picker.DefaultFileExtension = ".jpg";
+            
+            // 現在時刻から保存先のデフォルトのファイル名を付ける
+            var fileName = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            picker.SuggestedFileName = fileName;
+
+            // 画像なのでデフォルトの保存先をピクチャーライブラリにする
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            
+            // ファイル保存用ダイアログで保存先のファイルを取得する
+            var file = await picker.PickSaveFileAsync();
+            if (file != null)
+            {
+                // 保存したい画像のピクセルデーtあを取り出す
+                var bytes = new byte[dstBitmap.PixelBuffer.Length];
+                using (var strm = dstBitmap.PixelBuffer.AsStream())
+                {
+                    strm.Position = 0;
+                    strm.Read(bytes, 0, bytes.Length);
+                }
+
+                // ユーザーが指定したファイルのストリームを開く
+                var writeStrm = await file.OpenAsync(FileAccessMode.ReadWrite);
+                
+                // JPEGのエンコーダーを使ってピクセルデータをエンコードして、
+                // ストリームへ書き出す
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, writeStrm);
+                encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight,
+                    (uint)dstBitmap.PixelWidth, (uint)dstBitmap.PixelHeight, 96, 96, bytes);
+                await encoder.FlushAsync();
             }
         }
     }

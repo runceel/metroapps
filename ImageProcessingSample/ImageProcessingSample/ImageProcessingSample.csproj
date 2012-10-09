@@ -109,8 +109,13 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Media\Effects\BakumatsuEffect.cs" />
+    <Compile Include="Media\Effects\ContrastEffect.cs" />
     <Compile Include="Media\Effects\GrayscaleEffect.cs" />
     <Compile Include="Media\Effects\IEffect.cs" />
+    <Compile Include="Media\Effects\SaturationEffect.cs" />
+    <Compile Include="Media\Effects\SepiaEffect.cs" />
+    <Compile Include="Media\Effects\VignettingEffect.cs" />
     <Compile Include="Media\Effects\WriteableBitmapExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -121,11 +126,12 @@
     <None Include="ImageProcessingSample_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\lenna.jpg" />
+    <Content Include="Assets\bakumatsu.jpg" />
     <Content Include="Assets\Logo.png" />
     <Content Include="Assets\SmallLogo.png" />
     <Content Include="Assets\SplashScreen.png" />
     <Content Include="Assets\StoreLogo.png" />
+    <Content Include="Assets\vignetting_gradation.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

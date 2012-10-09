@@ -31,7 +31,7 @@
     </Page.Resources>
 
     <Page.BottomAppBar>
-		<AppBar Closed="AppBar_Closed_1" Opened="AppBar_Opened_1">
+		<AppBar>
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
@@ -42,7 +42,9 @@
 					<Button x:Name="buttonAdd" Style="{StaticResource AddAppBarButtonStyle}" Click="buttonAdd_Click"/>
                     <Button x:Name="buttonEdit" Style="{StaticResource EditAppBarButtonStyle}" Click="buttonEdit_Click" />
                 </StackPanel>
-				<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal"/>
+				<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+					<Button x:Name="buttonSave" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource SaveAppBarButtonStyle}" Click="buttonSave_Click"/>
+				</StackPanel>
 			</Grid>
 		</AppBar>
 	</Page.BottomAppBar>
@@ -56,9 +58,9 @@
             <StackPanel Orientation="Horizontal">
     			<Button x:Name="buttonNormal" Content="Normal" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24" Click="buttonNormal_Click"/>
                 <Button x:Name="buttonMonochrome" Content="Monochrome" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24" Click="buttonMonochrome_Click"/>
-                <Button x:Name="buttonSepia" Content="Sepia" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24"/>
-                <Button x:Name="buttonBakumatsu" Content="Bakumatsu" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24"/>
-                <Button x:Name="buttonToycamera" Content="Toycamera" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24"/>
+                <Button x:Name="buttonSepia" Content="Sepia" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24" Click="buttonSepia_Click"/>
+                <Button x:Name="buttonBakumatsu" Content="Bakumatsu" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24" Click="buttonBakumatsu_Click"/>
+                <Button x:Name="buttonToycamera" Content="Toycamera" HorizontalAlignment="Center" VerticalAlignment="Center" Width="160" Height="160" Margin="10" FontSize="24" Click="buttonToycamera_Click"/>
     		</StackPanel>
         </Grid>
 
