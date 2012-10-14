@@ -220,7 +220,7 @@ namespace ImageProcessingSample
         {
             if (srcBitmap == null) return;
 
-            // 口径食を表現した画像をアプリ内のリソースから読み出す
+            // 口径色を表現した画像をアプリ内のリソースから読み出す
             var imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/vignetting_gradation.png"));
             var vignettingBmp = await CreateBitmapAsync(imageFile);
 
@@ -257,7 +257,7 @@ namespace ImageProcessingSample
             var file = await picker.PickSaveFileAsync();
             if (file != null)
             {
-                // 保存したい画像のピクセルデーtあを取り出す
+                // 保存したい画像のピクセルデータを取り出す
                 var bytes = new byte[dstBitmap.PixelBuffer.Length];
                 using (var strm = dstBitmap.PixelBuffer.AsStream())
                 {
